@@ -162,3 +162,37 @@ input {
   color: #333;
 }
 
+.characters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+.character-card {
+  background: white;
+  border: 2px solid black;
+  border-radius: 15px;
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+  font-weight: bold;
+}
+
+.character-card:hover {
+  transform: scale(1.03);
+  background: #f2f2f2;
+}
+
+.character-card.selected {
+  background: black;
+  color: white;
+  border: 2px solid black;
+}
+
+.character-card.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
