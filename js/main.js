@@ -33,8 +33,8 @@ function goToSetup() {
   showScreen("screen-setup");
 }
 
-function goToCharacterSelection() {
-  playersCount = parseInt(document.getElementById("players").value);
+function selectPlayers(num) {
+  playersCount = num;
 
   let requiredCharacters = playersCount;
   if (playersCount === 1) requiredCharacters = 2;
