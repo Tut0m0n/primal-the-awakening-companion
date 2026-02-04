@@ -101,3 +101,15 @@ input {
   background: #111;
   border: 2px solid #8b0000;
 }
+
+.btn-mute {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #000;
+  border: 1px solid #444;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
