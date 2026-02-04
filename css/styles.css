@@ -87,6 +87,10 @@ input {
   width: 250px;
 }
 
+#screen-start {
+  position: relative;
+}
+
 .btn-start {
   background: #000;
   border: 2px solid #444;
