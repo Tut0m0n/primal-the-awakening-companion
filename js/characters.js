@@ -1,1 +1,1 @@
-console.log("Primal App iniciada");
+// Manejo de personajes
