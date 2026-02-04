@@ -145,3 +145,15 @@ function savePlayers() {
   alert("Jugadores guardados correctamente.");
   console.log(playerData);
 }
+
+function toggleMusic() {
+  const music = document.getElementById("intro-music");
+  if (!music) return;
+
+  if (music.paused) {
+    music.play();
+  } else {
+    music.pause();
+  }
+}
+
