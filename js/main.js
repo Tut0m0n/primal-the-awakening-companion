@@ -22,6 +22,14 @@ function showScreen(screenId) {
 }
 
 function goToSetup() {
+  const music = document.getElementById("intro-music");
+
+  if (music) {
+    music.play().catch(() => {
+      console.log("Autoplay bloqueado hasta interacción del usuario.");
+    });
+  }
+
   showScreen("screen-setup");
 }
 
