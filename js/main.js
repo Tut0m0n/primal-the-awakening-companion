@@ -35,45 +35,49 @@ function goToSetup() {
 
 function selectPlayers(num) {
   playersCount = num;
-
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
-
   selectedCharacters = [];
-
-  document.getElementById("selection-info").innerText =
-    `Debes seleccionar ${requiredCharacters} personaje(s).`;
 
   renderCharacters();
   showScreen("screen-characters");
 }
 
+
 function renderCharacters() {
-  const list = document.getElementById("character-list");
-  list.innerHTML = "";
+  const grid = document.getElementById("characters-grid");
+  grid.innerHTML = "";
 
-  characters.forEach(char => {
-    const div = document.createElement("div");
-    div.classList.add("character-item");
+  let requiredCharacters = playersCount;
+  if (playersCount === 1) requiredCharacters = 2;
 
-    if (char.locked) {
-      div.classList.add("locked");
+  characters.forEach((char) => {
+    const card = document.createElement("div");
+    card.classList.add("character-card");
+
+    if (!char.available) {
+      card.classList.add("disabled");
     }
 
     if (selectedCharacters.includes(char.id)) {
-      div.classList.add("selected");
+      card.classList.add("selected");
     }
 
-    div.innerText = char.name;
+    card.innerHTML = `
+      <div style="font-size:18px;">${char.name}</div>
+      <div style="font-size:13px; font-weight:normal;">${char.title}</div>
+      ${char.available ? "" : "<div style='margin-top:8px; font-size:12px;'>Pronto...</div>"}
+    `;
 
-    div.onclick = () => {
-      if (char.locked) return;
-      toggleCharacter(char.id);
-    };
+    if (char.available) {
+      card.onclick = () => toggleCharacter(char.id);
+    }
 
-    list.appendChild(div);
+    grid.appendChild(card);
   });
+
+  document.getElementById("selection-info").innerText =
+    `Seleccionados: ${selectedCharacters.length} / ${requiredCharacters}`;
 }
+
 
 function toggleCharacter(charId) {
   let requiredCharacters = playersCount;
@@ -92,18 +96,6 @@ function toggleCharacter(charId) {
   renderCharacters();
 }
 
-function confirmCharacters() {
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
-
-  if (selectedCharacters.length !== requiredCharacters) {
-    alert(`Debes seleccionar exactamente ${requiredCharacters} personaje(s).`);
-    return;
-  }
-
-  renderNameInputs();
-  showScreen("screen-names");
-}
 
 function renderNameInputs() {
   const form = document.getElementById("names-form");
@@ -157,3 +149,31 @@ function toggleMusic() {
   }
 }
 
+function toggleCharacter(characterId) {
+  let requiredCharacters = playersCount;
+  if (playersCount === 1) requiredCharacters = 2;
+
+  if (selectedCharacters.includes(characterId)) {
+    selectedCharacters = selectedCharacters.filter((c) => c !== characterId);
+  } else {
+    if (selectedCharacters.length >= requiredCharacters) {
+      alert("Ya seleccionaste el máximo de personajes permitidos.");
+      return;
+    }
+    selectedCharacters.push(characterId);
+  }
+
+  renderCharacters();
+}
+
+function confirmCharacters() {
+  let requiredCharacters = playersCount;
+  if (playersCount === 1) requiredCharacters = 2;
+
+  if (selectedCharacters.length !== requiredCharacters) {
+    alert(`Debes seleccionar exactamente ${requiredCharacters} personajes.`);
+    return;
+  }
+
+  goToNames();
+}
