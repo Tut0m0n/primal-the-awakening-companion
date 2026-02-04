@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  background: #0b0b0b;
-  color: #eee;
+  background: white;
+  color: black;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -16,14 +16,11 @@ body {
 }
 
 .logo {
-  width: 60vw;        /* 60% del ancho de pantalla */
-  max-width: 650px;   /* límite máximo para pantallas grandes */
+  width: 90vw;        /* casi todo el ancho */
+  max-width: none;    /* sin límite */
   height: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin: 0;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .btn {
@@ -91,10 +88,13 @@ input {
 #screen-start {
   position: relative;
   height: 100vh;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  gap: 20px;
 }
 
 .btn-start {
