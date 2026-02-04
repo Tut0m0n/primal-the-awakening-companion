@@ -1,4 +1,3 @@
-console.log("Primal App iniciada");
 let playersCount = 1;
 let selectedCharacters = [];
 
@@ -29,7 +28,6 @@ function goToSetup() {
 function goToCharacterSelection() {
   playersCount = parseInt(document.getElementById("players").value);
 
-  // regla especial: si es 1 jugador, debe elegir 2 personajes
   let requiredCharacters = playersCount;
   if (playersCount === 1) requiredCharacters = 2;
 
@@ -62,7 +60,6 @@ function renderCharacters() {
 
     div.onclick = () => {
       if (char.locked) return;
-
       toggleCharacter(char.id);
     };
 
