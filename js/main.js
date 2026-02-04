@@ -1,16 +1,16 @@
-let playersCount = 1;
+let playersCount = 0;
 let selectedCharacters = [];
 
 const characters = [
-  { id: "DAREON", name: "DAREON - LA GRAN ESPADA", locked: false },
-  { id: "LJONAR", name: "LJONAR - ESCUDO Y ESPADA", locked: false },
-  { id: "THOREG", name: "THOREG - EL MARTILLO", locked: false },
-  { id: "MIRAH", name: "MIRAH - EL ARCO", locked: false },
-  { id: "KARAH", name: "KARAH - LAS ESPADAS DUALES", locked: false },
-  { id: "HELEREN", name: "HELEREN - EL ARCO PISTOLA", locked: false },
+  { id: "DAREON", name: "DAREON", title: "LA GRAN ESPADA", available: true },
+  { id: "LJONAR", name: "LJONAR", title: "ESCUDO Y ESPADA", available: true },
+  { id: "THOREG", name: "THOREG", title: "EL MARTILLO", available: true },
+  { id: "MIRAH", name: "MIRAH", title: "EL ARCO", available: true },
+  { id: "KARAH", name: "KARAH", title: "LAS ESPADAS DUALES", available: true },
+  { id: "HELEREN", name: "HELEREN", title: "EL ARCO PISTOLA", available: true },
 
-  { id: "ZARAYA", name: "ZARAYA - LA LANZA (Pronto disponible)", locked: true },
-  { id: "DRUSK", name: "DRUSK - EL TAMBOR DE GUERRA (Pronto disponible)", locked: true }
+  { id: "ZARAYA", name: "ZARAYA", title: "LA LANZA", available: false },
+  { id: "DRUSK", name: "DRUSK", title: "EL TAMBOR DE GUERRA", available: false },
 ];
 
 function showScreen(screenId) {
