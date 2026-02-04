@@ -1,20 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="stylesheet" href="css/styles.css">
   <meta charset="UTF-8">
-  <title>Primal The Awakening Companion</title>
+  <title>Primal Companion</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
-<h1>Primal: The Awakening</h1>
-<p>App personal para gestionar la campaña</p>
+  <!-- Pantalla de Inicio -->
+  <div id="screen-start" class="screen active">
+    <img src="assets/images/primal-logo.png" class="logo" alt="Primal The Awakening">
+    <button class="btn" onclick="goToSetup()">ENTRAR</button>
+  </div>
 
-<h2>Personaje</h2>
-<p>Vida: <span id="hp">20</span></p>
-<button onclick="takeDamage(1)">-1 Daño</button>
+  <!-- Pantalla Setup -->
+  <div id="screen-setup" class="screen">
+    <h1>Configurar partida</h1>
 
-  
+    <label for="players">Cantidad de jugadores:</label>
+    <select id="players">
+      <option value="1">1 jugador (elige 2 personajes)</option>
+      <option value="2">2 jugadores</option>
+      <option value="3">3 jugadores</option>
+      <option value="4">4 jugadores</option>
+      <option value="5">5 jugadores</option>
+    </select>
+
+    <button class="btn" onclick="goToCharacterSelection()">Continuar</button>
+  </div>
+
+  <!-- Pantalla Selección -->
+  <div id="screen-characters" class="screen">
+    <h1>Selecciona personajes</h1>
+
+    <p id="selection-info"></p>
+
+    <div id="character-list" class="character-list"></div>
+
+    <button class="btn" onclick="confirmCharacters()">Confirmar selección</button>
+  </div>
+
+  <!-- Pantalla nombres -->
+  <div id="screen-names" class="screen">
+    <h1>Nombres de jugadores</h1>
+    <div id="names-form"></div>
+
+    <button class="btn" onclick="savePlayers()">Guardar</button>
+  </div>
+
 <script src="js/main.js"></script>
+
 </body>
 </html>
+
