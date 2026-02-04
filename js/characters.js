@@ -1,1 +1,1 @@
-<script src="js/characters.js"></script>
+console.log("Primal App iniciada");
