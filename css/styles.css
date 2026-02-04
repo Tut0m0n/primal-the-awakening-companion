@@ -16,10 +16,11 @@ body {
 }
 
 .logo {
- width: 380px;
-  max-width: 85%;
-  margin-top: 40px;
-  margin-bottom: 25px;
+  width: 60vw;        /* 60% del ancho de pantalla */
+  max-width: 650px;   /* límite máximo para pantallas grandes */
+  height: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -94,8 +95,8 @@ input {
 .btn-start {
   background: #000;
   border: 2px solid #444;
-  padding: 10px 22px;
-  font-size: 16px;
+  padding: 8px 18px;
+  font-size: 14px;
   border-radius: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -108,12 +109,13 @@ input {
 
 .btn-mute {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 6px;
+  right: 6px;
   background: #000;
   border: 1px solid #444;
-  font-size: 14px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  font-size: 5px;
+  padding: 4px 6px;
+  border-radius: 6px;
   cursor: pointer;
 }
+
