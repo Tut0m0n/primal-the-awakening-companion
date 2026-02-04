@@ -124,3 +124,41 @@ input {
   cursor: pointer;
 }
 
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 70px);
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.player-card {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.player-card:hover {
+  background: black;
+  color: white;
+  transform: scale(1.05);
+}
+
+.note {
+  margin-top: 25px;
+  font-size: 14px;
+  color: #333;
+}
+
