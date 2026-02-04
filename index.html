@@ -22,20 +22,24 @@
  </div>
 
   <!-- Pantalla Setup -->
-  <div id="screen-setup" class="screen">
-    <h1>Configurar partida</h1>
+ <div id="screen-setup" class="screen">
+  <h1>Configurar partida</h1>
+  <p>Selecciona cantidad de jugadores:</p>
 
-    <label for="players">Cantidad de jugadores:</label>
-    <select id="players">
-      <option value="1">1 jugador (elige 2 personajes)</option>
-      <option value="2">2 jugadores</option>
-      <option value="3">3 jugadores</option>
-      <option value="4">4 jugadores</option>
-      <option value="5">5 jugadores</option>
-    </select>
-
-    <button class="btn" onclick="goToCharacterSelection()">Continuar</button>
+  <div class="player-grid">
+    <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
+    <div class="player-card" onclick="selectPlayers(2)">2</div>
+    <div class="player-card" onclick="selectPlayers(3)">3</div>
+    <div class="player-card" onclick="selectPlayers(4)">4</div>
+    <div class="player-card" onclick="selectPlayers(5)">5</div>
   </div>
+
+  <p class="note">
+    °°Si eliges SOLO, deberás seleccionar 2 personajes.
+    °°A mayor cantidad de personajes escojas, más aumentara el tiempo de juego.
+  </p>
+</div>
+
 
   <!-- Pantalla Selección -->
   <div id="screen-characters" class="screen">
