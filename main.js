@@ -1,263 +1,274 @@
-/* =======================
-   SISTEMA DE PARTIDAS
-======================= */
+/* =====================================================
+   VARIABLES GLOBALES
+===================================================== */
 
-let saves = JSON.parse(localStorage.getItem("primal-saves")) || {};
-let currentSaveName = null;
+let currentSave = null
+let selectedCampaign = null
+let playerCount = 0
+let selectedCharacters = []
+let playerNames = {}
+let selectedDifficulty = null
 
-/* =======================
+const screens = document.querySelectorAll('.screen')
+
+/* =====================================================
    UTILIDADES
-======================= */
-
-function saveAll() {
-  localStorage.setItem("primal-saves", JSON.stringify(saves));
-}
-
-function getCurrent() {
-  return saves[currentSaveName];
-}
+===================================================== */
 
 function showScreen(id) {
-  const screen = document.getElementById(id);
-  if (!screen) return;
-
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  screen.classList.add("active");
-
-  if (currentSaveName) {
-    getCurrent().screen = id;
-    saveAll();
-  }
+  screens.forEach(s => s.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
 }
-
-/* =======================
-   AUDIO
-======================= */
 
 function toggleMusic() {
-  const music = document.getElementById("intro-music");
-  const btn = document.getElementById("btn-mute");
+  const audio = document.getElementById('intro-music')
+  const btn = document.getElementById('btn-mute')
 
-  if (music.paused) {
-    music.play();
-    btn.textContent = "🔊";
+  if (audio.paused) {
+    audio.play()
+    btn.textContent = '🔊'
   } else {
-    music.pause();
-    btn.textContent = "🔇";
+    audio.pause()
+    btn.textContent = '🔇'
   }
 }
 
-/* =======================
+/* =====================================================
    INICIO
-======================= */
+===================================================== */
 
 function enterApp() {
-  document.getElementById("enter-container").classList.add("hidden");
-  document.getElementById("main-menu").classList.remove("hidden");
-  document.getElementById("btn-save-exit").classList.remove("hidden");
+  document.getElementById('enter-container').classList.add('hidden')
+  document.getElementById('main-menu').classList.remove('hidden')
+  document.getElementById('btn-save-exit').classList.remove('hidden')
 
-  document.getElementById("intro-music").play().catch(() => {});
+  const audio = document.getElementById('intro-music')
+  audio.volume = 0.5
+  audio.play()
 }
 
-function backToStart() {
-  showScreen("screen-start");
-}
-
-function saveAndExit() {
-  saveAll();
-  location.reload();
-}
-
-/* =======================
+/* =====================================================
    NUEVA PARTIDA
-======================= */
+===================================================== */
 
 function openNewGame() {
-  const name = prompt("Nombre de la partida:");
-  if (!name || saves[name]) return;
-
-  saves[name] = {
-    name,
-    campaign: null,
-    playersCount: 0,
-    characters: [],
-    playerNames: {},
-    difficulty: null,
-    screen: "screen-campaign"
-  };
-
-  currentSaveName = name;
-  saveAll();
-  showScreen("screen-campaign");
+  document.getElementById('main-menu').classList.add('hidden')
+  document.getElementById('new-game-container').classList.remove('hidden')
 }
 
-/* =======================
-   CARGAR PARTIDA
-======================= */
+function cancelNewGame() {
+  document.getElementById('new-game-container').classList.add('hidden')
+  document.getElementById('main-menu').classList.remove('hidden')
+}
 
-function openLoadGame() {
-  const list = document.getElementById("save-list");
-  list.innerHTML = "";
+function confirmNewGame() {
+  const name = document.getElementById('new-save-name').value.trim()
+  if (!name) return
 
-  const names = Object.keys(saves);
-  if (names.length === 0) {
-    list.innerHTML = "<p>No hay partidas guardadas</p>";
+  currentSave = {
+    name,
+    campaign: null,
+    players: {},
+    characters: [],
+    difficulty: null
   }
 
-  names.forEach(name => {
-    const row = document.createElement("div");
-    row.className = "name-row";
-    row.innerHTML = `
-      <strong>${name}</strong>
-      <button onclick="loadGame('${name}')">🎟️</button>
-      <button onclick="deleteGame('${name}')">❌</button>
-    `;
-    list.appendChild(row);
-  });
+  localStorage.setItem(`primal_${name}`, JSON.stringify(currentSave))
+  selectedCharacters = []
+  playerNames = {}
 
-  document.getElementById("main-menu").classList.add("hidden");
-  document.getElementById("save-list-container").classList.remove("hidden");
+  showScreen('screen-campaign')
+}
+
+/* =====================================================
+   CARGAR PARTIDA
+===================================================== */
+
+function openLoadGame() {
+  document.getElementById('main-menu').classList.add('hidden')
+  document.getElementById('save-list-container').classList.remove('hidden')
+  loadSaveList()
 }
 
 function closeLoadGame() {
-  document.getElementById("save-list-container").classList.add("hidden");
-  document.getElementById("main-menu").classList.remove("hidden");
+  document.getElementById('save-list-container').classList.add('hidden')
+  document.getElementById('main-menu').classList.remove('hidden')
+}
+
+function loadSaveList() {
+  const list = document.getElementById('save-list')
+  list.innerHTML = ''
+
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('primal_'))
+    .forEach(key => {
+      const save = JSON.parse(localStorage.getItem(key))
+
+      const row = document.createElement('div')
+      row.className = 'save-row'
+
+      const name = document.createElement('span')
+      name.textContent = save.name
+
+      const loadBtn = document.createElement('button')
+      loadBtn.textContent = '✔'
+      loadBtn.onclick = () => loadGame(save.name)
+
+      const deleteBtn = document.createElement('button')
+      deleteBtn.textContent = '✖'
+      deleteBtn.onclick = () => deleteGame(save.name)
+
+      row.appendChild(name)
+      row.appendChild(loadBtn)
+      row.appendChild(deleteBtn)
+
+      list.appendChild(row)
+    })
 }
 
 function loadGame(name) {
-  currentSaveName = name;
-  saveAll();
-  showScreen(getCurrent().screen);
+  const data = localStorage.getItem(`primal_${name}`)
+  if (!data) return
+
+  currentSave = JSON.parse(data)
+  selectedCampaign = currentSave.campaign
+  selectedCharacters = currentSave.characters || []
+  playerNames = currentSave.players || {}
+  selectedDifficulty = currentSave.difficulty
+
+  showScreen('screen-prologue')
 }
 
 function deleteGame(name) {
-  if (!confirm("¿Borrar partida?")) return;
-  delete saves[name];
-  saveAll();
-  openLoadGame();
+  localStorage.removeItem(`primal_${name}`)
+  loadSaveList()
 }
 
-/* =======================
+/* =====================================================
    CAMPAÑA
-======================= */
+===================================================== */
 
 function selectCampaign(type) {
-  getCurrent().campaign = type;
-  saveAll();
-  showScreen("screen-players");
+  selectedCampaign = type
+  currentSave.campaign = type
+  saveProgress()
+  showScreen('screen-players')
 }
 
-/* =======================
+function backToStart() {
+  showScreen('screen-start')
+}
+
+/* =====================================================
    JUGADORES
-======================= */
+===================================================== */
 
 function selectPlayers(count) {
-  const s = getCurrent();
-  s.playersCount = count === 1 ? 2 : Math.min(count, 5);
-  s.characters = [];
-  s.playerNames = {};
-  saveAll();
-  showScreen("screen-characters");
-  updateSelectedCount();
+  playerCount = count
+  selectedCharacters = []
+  document.getElementById('selected-count').textContent =
+    `Seleccionados: 0 / ${playerCount}`
+
+  showScreen('screen-characters')
 }
 
-/* =======================
+/* =====================================================
    PERSONAJES
-======================= */
+===================================================== */
 
 function toggleCharacter(name) {
-  const s = getCurrent();
-  if (s.characters.includes(name)) {
-    s.characters = s.characters.filter(c => c !== name);
-  } else if (s.characters.length < s.playersCount) {
-    s.characters.push(name);
+  if (selectedCharacters.includes(name)) {
+    selectedCharacters = selectedCharacters.filter(c => c !== name)
+  } else {
+    if (selectedCharacters.length >= playerCount) return
+    selectedCharacters.push(name)
   }
-  saveAll();
-  updateCharactersUI();
-}
 
-function updateCharactersUI() {
-  const s = getCurrent();
+  document.getElementById('selected-count').textContent =
+    `Seleccionados: ${selectedCharacters.length} / ${playerCount}`
 
-  document.querySelectorAll(".character-btn").forEach(btn => {
-    btn.classList.toggle("selected", s.characters.includes(btn.textContent));
-  });
-
-  updateSelectedCount();
-
-  const btn = document.getElementById("btn-confirm");
-  btn.disabled = s.characters.length !== s.playersCount;
-  btn.classList.toggle("disabled", btn.disabled);
-}
-
-function updateSelectedCount() {
-  const s = getCurrent();
-  document.getElementById("selected-count").innerText =
-    `Seleccionados: ${s.characters.length} / ${s.playersCount}`;
+  const btn = document.getElementById('btn-confirm')
+  if (selectedCharacters.length === playerCount) {
+    btn.disabled = false
+    btn.classList.remove('disabled')
+  } else {
+    btn.disabled = true
+    btn.classList.add('disabled')
+  }
 }
 
 function confirmCharacters() {
-  buildNames();
-  showScreen("screen-names");
+  currentSave.characters = selectedCharacters
+  saveProgress()
+  buildNameInputs()
+  showScreen('screen-names')
 }
 
-/* =======================
+/* =====================================================
    NOMBRES
-======================= */
+===================================================== */
 
-function buildNames() {
-  const s = getCurrent();
-  const c = document.getElementById("names-container");
-  c.innerHTML = "";
+function buildNameInputs() {
+  const container = document.getElementById('names-container')
+  container.innerHTML = ''
 
-  s.characters.forEach(ch => {
-    c.innerHTML += `
-      <div class="name-row">
-        <strong>${ch}</strong>
-        <input id="name-${ch}" class="name-input" value="${s.playerNames[ch] || ""}">
-        <button onclick="savePlayerName('${ch}')">🎟️</button>
-        <button onclick="deletePlayerName('${ch}')">❌</button>
-      </div>
-    `;
-  });
-
-  updateNamesButton();
+  selectedCharacters.forEach(char => {
+    const input = document.createElement('input')
+    input.placeholder = `Jugador (${char})`
+    input.oninput = () => {
+      playerNames[char] = input.value
+      checkNames()
+    }
+    container.appendChild(input)
+  })
 }
 
-function savePlayerName(ch) {
-  const s = getCurrent();
-  const val = document.getElementById(`name-${ch}`).value.trim();
-  if (!val) return;
-  s.playerNames[ch] = val;
-  saveAll();
-  updateNamesButton();
-}
+function checkNames() {
+  const filled = Object.values(playerNames).filter(v => v).length
+  const btn = document.getElementById('btn-start-campaign')
 
-function deletePlayerName(ch) {
-  const s = getCurrent();
-  delete s.playerNames[ch];
-  buildNames();
-  saveAll();
+  if (filled === selectedCharacters.length) {
+    btn.disabled = false
+    btn.classList.remove('disabled')
+  } else {
+    btn.disabled = true
+    btn.classList.add('disabled')
+  }
 }
-
-function updateNamesButton() {
-  const s = getCurrent();
-  const btn = document.getElementById("btn-start-campaign");
-  const ok = Object.keys(s.playerNames).length === s.characters.length;
-  btn.disabled = !ok;
-  btn.classList.toggle("disabled", !ok);
-}
-
-/* =======================
-   DIFICULTAD
-======================= */
 
 function goToDifficulty() {
-  showScreen("screen-difficulty");
+  currentSave.players = playerNames
+  saveProgress()
+  showScreen('screen-difficulty')
 }
 
-function selectDifficulty(d) {
-  getCurrent().difficulty = d;
-  saveAll();
-  alert("Partida guardada correctamente");
+/* =====================================================
+   DIFICULTAD
+===================================================== */
+
+function selectDifficulty(level) {
+  selectedDifficulty = level
+  currentSave.difficulty = level
+  saveProgress()
+}
+
+function goToPrologue() {
+  showScreen('screen-prologue')
+}
+
+/* =====================================================
+   GUARDADO
+===================================================== */
+
+function saveProgress() {
+  if (!currentSave) return
+  localStorage.setItem(
+    `primal_${currentSave.name}`,
+    JSON.stringify(currentSave)
+  )
+}
+
+function saveAndExit() {
+  saveProgress()
+  location.reload()
 }
