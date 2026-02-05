@@ -1,34 +1,34 @@
 let gameState = {
-  saveName: null,
+  saveName: "",
   campaign: null,
   playersCount: 0,
-  selectedCharacters: [],
+  characters: [],
   playerNames: {},
   difficulty: null,
-  currentScreen: "screen-start"
+  screen: "screen-start"
 };
 
-/* ======================= */
 function saveGameState() {
   localStorage.setItem("primal-save", JSON.stringify(gameState));
 }
 
 function loadGameState() {
   const saved = localStorage.getItem("primal-save");
-  if (!saved) return false;
+  if (!saved) return;
   gameState = JSON.parse(saved);
-  return true;
 }
 
-/* ======================= */
 function showScreen(id) {
+  const target = document.getElementById(id);
+  if (!target) return; // 🔒 evita el crash
+
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  gameState.currentScreen = id;
+  target.classList.add("active");
+  gameState.screen = id;
   saveGameState();
 }
 
-/* ======================= */
+/* ===== AUDIO ===== */
 function toggleMusic() {
   const music = document.getElementById("intro-music");
   const btn = document.getElementById("btn-mute");
@@ -42,7 +42,6 @@ function toggleMusic() {
   }
 }
 
-/* ======================= */
 function showMainMenu() {
   document.getElementById("enter-container").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
@@ -57,64 +56,60 @@ function newGame() {
     saveName: name,
     campaign: null,
     playersCount: 0,
-    selectedCharacters: [],
+    characters: [],
     playerNames: {},
     difficulty: null,
-    currentScreen: "screen-campaign"
+    screen: "screen-campaign"
   };
 
+  document.getElementById("btn-save-exit").classList.remove("hidden");
   saveGameState();
   showScreen("screen-campaign");
-  document.getElementById("btn-save-exit").classList.remove("hidden");
 }
 
-/* ======================= */
+/* ===== CAMPAÑA ===== */
 function selectCampaign(type) {
   gameState.campaign = type;
   saveGameState();
   showScreen("screen-players");
 }
 
-/* ======================= */
+/* ===== JUGADORES ===== */
 function selectPlayers(count) {
-  gameState.playersCount = Math.min(count, 5);
-  gameState.selectedCharacters = [];
+  gameState.playersCount = count === 1 ? 2 : Math.min(count, 5);
+  gameState.characters = [];
   gameState.playerNames = {};
   saveGameState();
-  updateSelectedCount();
   showScreen("screen-characters");
+  updateSelectedCount();
 }
 
-/* ======================= */
+/* ===== PERSONAJES ===== */
 function toggleCharacter(name) {
-  const arr = gameState.selectedCharacters;
-
-  if (arr.includes(name)) {
-    gameState.selectedCharacters = arr.filter(c => c !== name);
-  } else if (arr.length < gameState.playersCount) {
-    arr.push(name);
+  if (gameState.characters.includes(name)) {
+    gameState.characters = gameState.characters.filter(c => c !== name);
+  } else if (gameState.characters.length < gameState.playersCount) {
+    gameState.characters.push(name);
   }
-
   updateCharactersUI();
   saveGameState();
 }
 
 function updateCharactersUI() {
   document.querySelectorAll(".character-btn").forEach(btn => {
-    const name = btn.textContent;
-    btn.classList.toggle("selected", gameState.selectedCharacters.includes(name));
+    btn.classList.toggle("selected", gameState.characters.includes(btn.textContent));
   });
 
   updateSelectedCount();
 
-  const confirm = document.getElementById("btn-confirm");
-  confirm.disabled = gameState.selectedCharacters.length !== gameState.playersCount;
-  confirm.classList.toggle("disabled", confirm.disabled);
+  const btn = document.getElementById("btn-confirm");
+  btn.disabled = gameState.characters.length !== gameState.playersCount;
+  btn.classList.toggle("disabled", btn.disabled);
 }
 
 function updateSelectedCount() {
   document.getElementById("selected-count").innerText =
-    `Seleccionados: ${gameState.selectedCharacters.length} / ${gameState.playersCount}`;
+    `Seleccionados: ${gameState.characters.length} / ${gameState.playersCount}`;
 }
 
 function confirmCharacters() {
@@ -122,73 +117,56 @@ function confirmCharacters() {
   showScreen("screen-names");
 }
 
-/* ======================= */
+/* ===== NOMBRES ===== */
 function buildNames() {
-  const container = document.getElementById("names-container");
-  container.innerHTML = "";
+  const c = document.getElementById("names-container");
+  c.innerHTML = "";
 
-  gameState.selectedCharacters.forEach(c => {
-    container.innerHTML += `
+  gameState.characters.forEach(ch => {
+    c.innerHTML += `
       <div class="name-row">
-        <strong>${c}</strong>
-        <input id="name-${c}" class="name-input" value="${gameState.playerNames[c] || ''}">
-        <button onclick="savePlayerName('${c}')">💾</button>
-        <button onclick="editPlayerName('${c}')">✏️</button>
-        <button onclick="deletePlayerName('${c}')">❌</button>
+        <strong>${ch}</strong>
+        <input id="name-${ch}" class="name-input" value="${gameState.playerNames[ch] || ""}">
+        <button onclick="savePlayerName('${ch}')">💾</button>
+        <button onclick="deletePlayerName('${ch}')">❌</button>
       </div>
     `;
   });
-
-  updateStartButton();
 }
 
-function savePlayerName(char) {
-  const val = document.getElementById(`name-${char}`).value.trim();
-  if (!val) return;
-  gameState.playerNames[char] = val;
+function savePlayerName(ch) {
+  const v = document.getElementById(`name-${ch}`).value.trim();
+  if (!v) return;
+  gameState.playerNames[ch] = v;
   saveGameState();
-  updateStartButton();
 }
 
-function editPlayerName(char) {
-  document.getElementById(`name-${char}`).focus();
-}
-
-function deletePlayerName(char) {
-  delete gameState.playerNames[char];
+function deletePlayerName(ch) {
+  delete gameState.playerNames[ch];
   buildNames();
   saveGameState();
 }
 
-function updateStartButton() {
-  const btn = document.getElementById("btn-start-campaign");
-  const ok = Object.keys(gameState.playerNames).length === gameState.selectedCharacters.length;
-  btn.disabled = !ok;
-  btn.classList.toggle("disabled", !ok);
-}
-
-/* ======================= */
+/* ===== DIFICULTAD ===== */
 function goToDifficulty() {
   showScreen("screen-difficulty");
 }
 
-function selectDifficulty(diff) {
-  gameState.difficulty = diff;
+function selectDifficulty(d) {
+  gameState.difficulty = d;
   saveGameState();
-  alert("Partida guardada");
+  alert("Partida guardada correctamente");
 }
 
-/* ======================= */
+/* ===== SALIR ===== */
 function saveAndExit() {
   saveGameState();
   location.reload();
 }
 
-/* ======================= */
+/* ===== INIT ===== */
 window.onload = () => {
-  if (loadGameState()) {
-    showScreen(gameState.currentScreen);
-    if (gameState.currentScreen === "screen-characters") updateCharactersUI();
-    if (gameState.currentScreen === "screen-names") buildNames();
-  }
+  loadGameState();
+  showScreen(gameState.screen || "screen-start");
 };
+
