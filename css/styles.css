@@ -227,3 +227,44 @@ input {
   cursor: not-allowed;
 }
 
+.name-row {
+  margin: 15px auto;
+  max-width: 500px;
+  text-align: left;
+}
+
+.name-row input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 2px solid black;
+  font-size: 15px;
+}
+
+.name-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.name-actions button {
+  background: black;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.name-actions button:hover {
+  background: #444;
+}
+
+.disabled-mode {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
