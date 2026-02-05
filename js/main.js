@@ -193,3 +193,24 @@ function renderPlayers() {
   });
 }
 
+function goToNames() {
+  const container = document.getElementById("names-form");
+  container.innerHTML = "";
+
+  selectedCharacters.forEach((charId) => {
+    const char = characters.find((c) => c.id === charId);
+
+    const div = document.createElement("div");
+    div.classList.add("name-row");
+
+    div.innerHTML = `
+      <label><b>${char.name}</b> - ${char.title}</label>
+      <input type="text" id="player-${charId}" placeholder="Nombre del jugador..." />
+    `;
+
+    container.appendChild(div);
+  });
+
+  showScreen("screen-names");
+}
+
