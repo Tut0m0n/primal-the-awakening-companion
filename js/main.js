@@ -379,10 +379,19 @@ function selectCampaign(campaign) {
 function openMainMenu() {
   const enterBtn = document.getElementById("btn-enter");
   const menu = document.getElementById("main-menu");
+  const music = document.getElementById("intro-music");
+
+  if (music) {
+    music.volume = 0.5;
+    music.play().catch(() => {
+      console.log("Autoplay bloqueado hasta interacción del usuario.");
+    });
+  }
 
   if (enterBtn) enterBtn.style.display = "none";
   if (menu) menu.classList.remove("hidden");
 }
+
 
 function newGame() {
   const name = prompt("Nombre de la nueva partida:");
