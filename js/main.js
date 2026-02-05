@@ -8,6 +8,14 @@ let selectedPlayers = null;
 let selectedCharacters = [];
 let playersNames = {};
 
+// =======================================
+// SISTEMA DE GUARDADO LOCAL
+// =======================================
+
+let saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
+let selectedSaveIndex = null;
+let currentSave = null;
+
 
 /* ==========================================
    LISTA DE PERSONAJES
@@ -362,5 +370,173 @@ function selectCampaign(campaign) {
   if (selectedCampaign === "normal") {
     showScreen("screen-setup");
   }
+}
+
+// =======================================
+// MENÚ PRINCIPAL (NUEVA / CARGAR / BORRAR)
+// =======================================
+
+function openMainMenu() {
+  const enterBtn = document.getElementById("btn-enter");
+  const menu = document.getElementById("main-menu");
+
+  if (enterBtn) enterBtn.style.display = "none";
+  if (menu) menu.classList.remove("hidden");
+}
+
+function newGame() {
+  const name = prompt("Nombre de la nueva partida:");
+
+  if (!name || name.trim() === "") {
+    alert("Debes ingresar un nombre válido.");
+    return;
+  }
+
+  const saveName = name.trim();
+
+  const exists = saves.find((s) => s.name === saveName);
+  if (exists) {
+    alert("Ya existe una partida con ese nombre.");
+    return;
+  }
+
+  currentSave = {
+    name: saveName,
+    campaign: null,
+    playersCount: null,
+    selectedCharacters: [],
+    playersNames: {},
+    difficulty: null
+  };
+
+  saves.push(currentSave);
+  localStorage.setItem("primal_saves", JSON.stringify(saves));
+
+  alert(`Partida creada: ${saveName}`);
+
+  showScreen("screen-campaign");
+}
+
+function showSavedGames() {
+  const list = document.getElementById("saved-games-list");
+  if (!list) return;
+
+  list.classList.remove("hidden");
+  list.innerHTML = "";
+
+  selectedSaveIndex = null;
+  disableSaveActions();
+
+  if (saves.length === 0) {
+    list.innerHTML = "<p>No hay partidas guardadas.</p>";
+    return;
+  }
+
+  saves.forEach((save, index) => {
+    const item = document.createElement("div");
+    item.classList.add("save-item");
+
+    item.innerHTML = `
+      <span>${save.name}</span>
+      <button class="mini-btn">Seleccionar</button>
+    `;
+
+    item.querySelector("button").addEventListener("click", () => {
+      selectedSaveIndex = index;
+      enableSaveActions();
+      highlightSelectedSave(index);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function highlightSelectedSave(index) {
+  const items = document.querySelectorAll(".save-item");
+
+  items.forEach((item, i) => {
+    if (i === index) item.classList.add("selected-save");
+    else item.classList.remove("selected-save");
+  });
+}
+
+function disableSaveActions() {
+  const playBtn = document.getElementById("btn-play-save");
+  const deleteBtn = document.getElementById("btn-delete-save");
+
+  if (playBtn) {
+    playBtn.disabled = true;
+    playBtn.classList.add("disabled");
+  }
+
+  if (deleteBtn) {
+    deleteBtn.disabled = true;
+    deleteBtn.classList.add("disabled");
+  }
+}
+
+function enableSaveActions() {
+  const playBtn = document.getElementById("btn-play-save");
+  const deleteBtn = document.getElementById("btn-delete-save");
+
+  if (playBtn) {
+    playBtn.disabled = false;
+    playBtn.classList.remove("disabled");
+  }
+
+  if (deleteBtn) {
+    deleteBtn.disabled = false;
+    deleteBtn.classList.remove("disabled");
+  }
+}
+
+function playSelectedSave() {
+  if (selectedSaveIndex === null) return;
+
+  currentSave = saves[selectedSaveIndex];
+
+  alert(`Cargando partida: ${currentSave.name}`);
+
+  if (!currentSave.campaign) {
+    showScreen("screen-campaign");
+    return;
+  }
+
+  if (!currentSave.playersCount) {
+    showScreen("screen-setup");
+    return;
+  }
+
+  if (currentSave.selectedCharacters.length > 0 && Object.keys(currentSave.playersNames).length === 0) {
+    selectedCharacters = currentSave.selectedCharacters;
+    goToNames();
+    return;
+  }
+
+  if (!currentSave.difficulty) {
+    showScreen("screen-difficulty");
+    return;
+  }
+
+  alert("Partida completamente cargada. (Próximo paso: ir a campaña)");
+}
+
+function askDeleteSave() {
+  if (selectedSaveIndex === null) return;
+
+  const saveName = saves[selectedSaveIndex].name;
+
+  const confirmDelete = confirm(`¿Seguro que quieres borrar la partida "${saveName}"?`);
+
+  if (!confirmDelete) return;
+
+  saves.splice(selectedSaveIndex, 1);
+  localStorage.setItem("primal_saves", JSON.stringify(saves));
+
+  selectedSaveIndex = null;
+
+  alert("Partida borrada.");
+
+  showSavedGames();
 }
 
