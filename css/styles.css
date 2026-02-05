@@ -151,6 +151,13 @@ input {
   transition: 0.2s;
 }
 
+.player-card.selected {
+  background: white;
+  color: black;
+  border: 2px solid black;
+  transform: scale(1.08);
+}
+
 
 .player-card:hover {
   background: white;
