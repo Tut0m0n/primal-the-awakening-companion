@@ -3,12 +3,14 @@
 ======================= */
 
 let currentSaveName = null;
+
 let gameState = {
   campaign: null,
   playersCount: 0,
   characters: [],
   playerNames: {},
-  difficulty: null
+  difficulty: null,
+  currentScene: "start"
 };
 
 /* =======================
@@ -40,7 +42,7 @@ function toggleMusic() {
 }
 
 /* =======================
-   GUARDADO
+   GUARDADO LOCAL
 ======================= */
 
 function saveGameState() {
@@ -57,12 +59,79 @@ function saveAndExit() {
 }
 
 /* =======================
+   EXPORT / IMPORT JSON
+======================= */
+
+function exportJSON() {
+  if (!currentSaveName) {
+    alert("No hay partida cargada.");
+    return;
+  }
+
+  const data = {
+    saveName: currentSaveName,
+    gameState: gameState
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = currentSaveName + ".json";
+  a.click();
+}
+
+function importJSON() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+
+        if (!data.saveName || !data.gameState) {
+          alert("Archivo inválido.");
+          return;
+        }
+
+        currentSaveName = data.saveName;
+        gameState = data.gameState;
+
+        saveGameState();
+
+        document.getElementById("intro-music").pause();
+        document.getElementById("btn-save-exit").classList.remove("hidden");
+
+        showScreen("screen-prologue");
+      } catch {
+        alert("Error al leer el archivo.");
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
+
+/* =======================
    INICIO
 ======================= */
 
 function showMainMenu() {
   document.getElementById("enter-container").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
+  document.getElementById("json-controls").classList.remove("hidden");
+
   document.getElementById("intro-music").play().catch(() => {});
 }
 
@@ -101,7 +170,8 @@ function confirmNewGame() {
     playersCount: 0,
     characters: [],
     playerNames: {},
-    difficulty: null
+    difficulty: null,
+    currentScene: "campaign"
   };
 
   saveGameState();
@@ -141,14 +211,16 @@ function loadGame(name) {
   currentSaveName = name;
   gameState = JSON.parse(data);
 
-  showScreen("screen-campaign");
+  document.getElementById("intro-music").pause();
+  document.getElementById("btn-save-exit").classList.remove("hidden");
+
+  showScreen("screen-prologue");
 }
 
 function deleteGame(name) {
-  if (confirm("¿Eliminar partida?")) {
-    localStorage.removeItem("primal_save_" + name);
-    showSavedGames();
-  }
+  if (!confirm("¿Eliminar partida?")) return;
+  localStorage.removeItem("primal_save_" + name);
+  showSavedGames();
 }
 
 /* =======================
@@ -157,10 +229,15 @@ function deleteGame(name) {
 
 function selectCampaign(type) {
   gameState.campaign = type;
+  gameState.currentScene = "players";
   saveGameState();
 
   markSelected(event.target);
   showScreen("screen-players");
+}
+
+function goBackToCampaign() {
+  showScreen("screen-campaign");
 }
 
 /* =======================
@@ -171,11 +248,16 @@ function selectPlayers(count) {
   gameState.playersCount = count === 1 ? 2 : count;
   gameState.characters = [];
   gameState.playerNames = {};
+  gameState.currentScene = "characters";
   saveGameState();
 
   markSelected(event.target);
   updateSelectedCount();
   showScreen("screen-characters");
+}
+
+function goBackToPlayers() {
+  showScreen("screen-players");
 }
 
 /* =======================
@@ -223,6 +305,10 @@ function updateCharactersUI() {
 function updateSelectedCount() {
   document.getElementById("selected-count").innerText =
     `Seleccionados: ${gameState.characters.length} / ${gameState.playersCount}`;
+}
+
+function goBackToCharacters() {
+  showScreen("screen-characters");
 }
 
 /* =======================
@@ -296,6 +382,7 @@ function updateNamesContinue() {
 
 function selectDifficulty(diff) {
   gameState.difficulty = diff;
+  gameState.currentScene = "prologue";
   saveGameState();
 
   markSelected(event.target);
@@ -309,6 +396,10 @@ function selectDifficulty(diff) {
     document.getElementById("btn-save-exit").classList.remove("hidden");
     showScreen("screen-prologue");
   };
+}
+
+function goBackToNames() {
+  showScreen("screen-names");
 }
 
 /* =======================
