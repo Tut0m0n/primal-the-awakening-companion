@@ -336,8 +336,17 @@ let selectedCampaign = null;
 
 // Ir a pantalla selección campaña
 function goToCampaign() {
+  const music = document.getElementById("intro-music");
+
+  if (music) {
+    music.play().catch(() => {
+      console.log("Autoplay bloqueado hasta interacción del usuario.");
+    });
+  }
+
   showScreen("screen-campaign");
 }
+
 
 // Volver al inicio
 function goBackToStart() {
