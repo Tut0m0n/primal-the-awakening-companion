@@ -1,23 +1,17 @@
+console.log("Primal App iniciada");
+
+/* ==========================================
+   VARIABLES GLOBALES
+========================================== */
 let playersCount = 0;
-let selectedCharacters = [];
 let selectedPlayers = null;
+let selectedCharacters = [];
 let playersNames = {};
 
-function startGame() {
-  playersNames = {};
 
-  selectedCharacters.forEach((charId) => {
-    const input = document.getElementById(`player-${charId}`);
-    playersNames[charId] = input.value.trim() || "Sin nombre";
-  });
-
-  console.log("Jugadores asignados:", playersNames);
-  alert("¡Jugadores guardados! (Mira la consola)");
-
-  // después aquí vamos a mandar al dashboard de campaña
-}
-
-
+/* ==========================================
+   LISTA DE PERSONAJES
+========================================== */
 const characters = [
   { id: "DAREON", name: "DAREON", title: "LA GRAN ESPADA", available: true },
   { id: "LJONAR", name: "LJONAR", title: "ESCUDO Y ESPADA", available: true },
@@ -30,14 +24,22 @@ const characters = [
   { id: "DRUSK", name: "DRUSK", title: "EL TAMBOR DE GUERRA", available: false },
 ];
 
+
+/* ==========================================
+   UTILIDAD: CAMBIO DE PANTALLAS
+========================================== */
 function showScreen(screenId) {
-  document.querySelectorAll(".screen").forEach(screen => {
+  document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.remove("active");
   });
 
   document.getElementById(screenId).classList.add("active");
 }
 
+
+/* ==========================================
+   PANTALLA INICIO
+========================================== */
 function goToSetup() {
   const music = document.getElementById("intro-music");
 
@@ -50,23 +52,70 @@ function goToSetup() {
   showScreen("screen-setup");
 }
 
+function toggleMusic() {
+  const music = document.getElementById("intro-music");
+  if (!music) return;
+
+  if (music.paused) {
+    music.play();
+  } else {
+    music.pause();
+  }
+}
+
+
+/* ==========================================
+   PANTALLA SETUP (SELECCIÓN DE JUGADORES)
+========================================== */
 function selectPlayers(num) {
   playersCount = num;
   selectedPlayers = num;
-  selectedCharacters = [];
 
- renderPlayers();
+  selectedCharacters = [];
+  playersNames = {};
+
+  renderPlayers();
   renderCharacters();
+
   showScreen("screen-characters");
 }
 
+function renderPlayers() {
+  const cards = document.querySelectorAll(".player-card");
+
+  cards.forEach((card) => {
+    card.classList.remove("selected");
+
+    // SOLO
+    if (card.innerText.trim() === "SOLO" && selectedPlayers === 1) {
+      card.classList.add("selected");
+    }
+
+    // NÚMEROS 2-5
+    if (parseInt(card.innerText) === selectedPlayers) {
+      card.classList.add("selected");
+    }
+  });
+}
+
+function goBackToPlayers() {
+  showScreen("screen-setup");
+}
+
+
+/* ==========================================
+   PANTALLA PERSONAJES
+========================================== */
+function getRequiredCharacters() {
+  if (playersCount === 1) return 2;
+  return playersCount;
+}
 
 function renderCharacters() {
   const grid = document.getElementById("characters-grid");
   grid.innerHTML = "";
 
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
+  const requiredCharacters = getRequiredCharacters();
 
   characters.forEach((char) => {
     const card = document.createElement("div");
@@ -95,15 +144,15 @@ function renderCharacters() {
 
   document.getElementById("selection-info").innerText =
     `Seleccionados: ${selectedCharacters.length} / ${requiredCharacters}`;
+
+  updateConfirmButton();
 }
 
-
 function toggleCharacter(charId) {
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
+  const requiredCharacters = getRequiredCharacters();
 
   if (selectedCharacters.includes(charId)) {
-    selectedCharacters = selectedCharacters.filter(id => id !== charId);
+    selectedCharacters = selectedCharacters.filter((id) => id !== charId);
   } else {
     if (selectedCharacters.length >= requiredCharacters) {
       alert("Ya seleccionaste el máximo permitido.");
@@ -115,79 +164,23 @@ function toggleCharacter(charId) {
   renderCharacters();
 }
 
+function updateConfirmButton() {
+  const btn = document.getElementById("btn-confirm");
+  if (!btn) return;
 
-function renderNameInputs() {
-  const form = document.getElementById("names-form");
-  form.innerHTML = "";
+  const requiredCharacters = getRequiredCharacters();
 
-  selectedCharacters.forEach((charId, index) => {
-    const char = characters.find(c => c.id === charId);
-
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <h3>${char.name}</h3>
-      <input type="text" id="player-${index}" placeholder="Nombre del jugador">
-    `;
-
-    form.appendChild(div);
-  });
-}
-
-function savePlayers() {
-  let playerData = [];
-
-  selectedCharacters.forEach((charId, index) => {
-    const input = document.getElementById(`player-${index}`);
-    const playerName = input.value.trim();
-
-    if (playerName === "") {
-      alert("Debes ingresar todos los nombres.");
-      return;
-    }
-
-    playerData.push({
-      character: charId,
-      player: playerName
-    });
-  });
-
-  localStorage.setItem("primal_players", JSON.stringify(playerData));
-
-  alert("Jugadores guardados correctamente.");
-  console.log(playerData);
-}
-
-function toggleMusic() {
-  const music = document.getElementById("intro-music");
-  if (!music) return;
-
-  if (music.paused) {
-    music.play();
+  if (selectedCharacters.length === requiredCharacters) {
+    btn.disabled = false;
+    btn.classList.remove("disabled");
   } else {
-    music.pause();
+    btn.disabled = true;
+    btn.classList.add("disabled");
   }
-}
-
-function toggleCharacter(characterId) {
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
-
-  if (selectedCharacters.includes(characterId)) {
-    selectedCharacters = selectedCharacters.filter((c) => c !== characterId);
-  } else {
-    if (selectedCharacters.length >= requiredCharacters) {
-      alert("Ya seleccionaste el máximo de personajes permitidos.");
-      return;
-    }
-    selectedCharacters.push(characterId);
-  }
-
-  renderCharacters();
 }
 
 function confirmCharacters() {
-  let requiredCharacters = playersCount;
-  if (playersCount === 1) requiredCharacters = 2;
+  const requiredCharacters = getRequiredCharacters();
 
   if (selectedCharacters.length !== requiredCharacters) {
     alert(`Debes seleccionar exactamente ${requiredCharacters} personajes.`);
@@ -197,18 +190,10 @@ function confirmCharacters() {
   goToNames();
 }
 
-function renderPlayers() {
-  const cards = document.querySelectorAll(".player-card");
 
-  cards.forEach((card) => {
-    card.classList.remove("selected");
-
-    if (parseInt(card.innerText) === selectedPlayers) {
-      card.classList.add("selected");
-    }
-  });
-}
-
+/* ==========================================
+   PANTALLA NOMBRES (ASIGNAR JUGADORES)
+========================================== */
 function goToNames() {
   const container = document.getElementById("names-form");
   container.innerHTML = "";
@@ -228,5 +213,30 @@ function goToNames() {
   });
 
   showScreen("screen-names");
+}
+
+function goBackToCharacters() {
+  showScreen("screen-characters");
+}
+
+function startGame() {
+  playersNames = {};
+
+  for (const charId of selectedCharacters) {
+    const input = document.getElementById(`player-${charId}`);
+    const name = input.value.trim();
+
+    if (name === "") {
+      alert("Debes ingresar todos los nombres.");
+      return;
+    }
+
+    playersNames[charId] = name;
+  }
+
+  console.log("Jugadores asignados:", playersNames);
+  alert("Jugadores guardados correctamente.");
+
+  // Aquí después vamos a la dificultad / campaña
 }
 
