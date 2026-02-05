@@ -1,16 +1,19 @@
 /* =======================
    ESTADO GLOBAL
 ======================= */
-let playersCount = 0;
+let playersCount = 0;                 // SOLO = 2 (regla tuya)
 let selectedCharacters = [];
 let playerNames = {};
 let currentSave = null;
+let selectedCampaign = null;
 
 /* =======================
    UTILIDAD PANTALLAS
 ======================= */
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s =>
+    s.classList.remove("active")
+  );
   document.getElementById(id).classList.add("active");
 }
 
@@ -50,6 +53,7 @@ function goBackToStart() {
 ======================= */
 function newGame() {
   currentSave = {};
+  selectedCampaign = null;
   showScreen("screen-campaign");
   document.getElementById("btn-save-exit").classList.remove("hidden");
 }
@@ -57,7 +61,8 @@ function newGame() {
 /* =======================
    CAMPAÑA
 ======================= */
-function selectCampaign() {
+function selectCampaign(campaign) {
+  selectedCampaign = campaign;
   showScreen("screen-players");
 }
 
@@ -69,10 +74,11 @@ function goBackToCampaign() {
    JUGADORES
 ======================= */
 function selectPlayers(count) {
-  playersCount = count === 1 ? 2 : count;
+  playersCount = count === 1 ? 2 : count; // regla SOLO = 2
   selectedCharacters = [];
   playerNames = {};
   updateSelectedCount();
+  updateCharactersUI();
   showScreen("screen-characters");
 }
 
@@ -89,7 +95,6 @@ function toggleCharacter(name) {
   } else if (selectedCharacters.length < playersCount) {
     selectedCharacters.push(name);
   }
-
   updateCharactersUI();
 }
 
@@ -127,10 +132,34 @@ function buildNames() {
     container.innerHTML += `
       <div class="name-row">
         <strong>${c}</strong>
-        <input id="name-${c}" class="name-input" placeholder="Nombre jugador">
+        <input
+          id="name-${c}"
+          class="name-input"
+          placeholder="Nombre jugador"
+          oninput="validateNames()"
+        >
       </div>
     `;
   });
+
+  validateNames();
+}
+
+function validateNames() {
+  const btn = document.getElementById("btn-start-campaign");
+  let valid = true;
+
+  selectedCharacters.forEach(c => {
+    const input = document.getElementById(`name-${c}`);
+    if (!input || input.value.trim() === "") {
+      valid = false;
+    } else {
+      playerNames[c] = input.value.trim();
+    }
+  });
+
+  btn.disabled = !valid;
+  btn.classList.toggle("disabled", !valid);
 }
 
 function goBackToCharacters() {
@@ -149,7 +178,11 @@ function goBackToNames() {
    DIFICULTAD
 ======================= */
 function selectDifficulty(diff) {
-  alert("Dificultad: " + diff.toUpperCase());
+  alert(
+    `Campaña: ${selectedCampaign.toUpperCase()}\n` +
+    `Jugadores: ${playersCount}\n` +
+    `Dificultad: ${diff.toUpperCase()}`
+  );
 }
 
 /* =======================
@@ -158,5 +191,4 @@ function selectDifficulty(diff) {
 function saveAndExit() {
   location.reload();
 }
-
 
