@@ -11,228 +11,186 @@
   <meta http-equiv="Expires" content="0" />
 
   <!-- CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1.0.0" />
 </head>
-
 <body>
 
-<!-- ================= AUDIO INTRO ================= -->
-<audio id="intro-music" loop>
-  <source src="assets/audio/intro.mp3" type="audio/mpeg">
-</audio>
+  <!-- AUDIO INTRO -->
+  <audio id="intro-music" loop>
+    <source src="assets/audio/intro.mp3" type="audio/mpeg">
+  </audio>
 
-<!-- ================= BOTONES FIJOS ================= -->
-<button id="btn-mute" class="btn btn-mute" onclick="toggleMusic()">🔊</button>
+  <!-- BOTÓN MUTE -->
+  <button id="btn-mute" class="btn btn-mute" onclick="toggleMusic()">🔊</button>
 
-<button
-  id="btn-save-exit"
-  class="btn btn-save-exit hidden"
-  onclick="saveAndExit()">
-  💾 Guardar / Salir
-</button>
+  <!-- BOTÓN GUARDAR / SALIR -->
+  <button id="btn-save-exit" class="btn btn-save-exit hidden" onclick="saveAndExit()">
+    💾 Guardar / Salir
+  </button>
 
-<!-- ================================================= -->
-<!-- PANTALLA INICIO -->
-<!-- ================================================= -->
-<div id="screen-start" class="screen active">
+  <!-- ============================= -->
+  <!-- PANTALLA INICIO -->
+  <!-- ============================= -->
+  <div id="screen-start" class="screen active">
 
-  <!-- LOGO -->
-  <img src="assets/images/LOGO.png"
-       class="logo"
-       alt="Primal The Awakening">
+    <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
 
-  <!-- BOTÓN ENTRAR -->
-  <div id="enter-container">
-    <button class="btn btn-start" onclick="enterApp()">ENTRAR</button>
-  </div>
+    <div id="enter-container">
+      <button class="btn btn-start" onclick="showMainMenu()">ENTRAR</button>
+    </div>
 
-  <!-- MENÚ PRINCIPAL -->
-  <div id="main-menu" class="hidden">
-    <div class="menu-buttons">
-      <button class="btn menu-btn" onclick="openNewGame()">➕ Nueva Partida</button>
-      <button class="btn menu-btn" onclick="openLoadGame()">💾 Cargar Partida</button>
+    <!-- MENÚ PRINCIPAL -->
+    <div id="main-menu" class="hidden">
+
+      <div class="menu-buttons">
+        <button class="btn menu-btn" onclick="showNewGame()">➕ Nueva Partida</button>
+        <button class="btn menu-btn" onclick="showSavedGames()">💾 Cargar Partida</button>
+      </div>
+
+      <!-- NUEVA PARTIDA -->
+      <div id="new-game-container" class="hidden">
+        <h2>Nueva Partida</h2>
+
+        <input
+          id="new-save-name"
+          class="name-input"
+          placeholder="Nombre de la partida"
+        />
+
+        <div class="nav-buttons">
+          <button class="btn" onclick="confirmNewGame()">💾 Guardar</button>
+          <button class="btn red" onclick="cancelNewGame()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- CARGAR PARTIDA -->
+      <div id="save-list-container" class="hidden">
+        <h2>Partidas Guardadas</h2>
+        <div id="save-list"></div>
+
+        <div class="nav-buttons">
+          <button class="btn red" onclick="goBackToMainMenu()">⬅ Volver</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- NUEVA PARTIDA (INPUT EMBEBIDO) -->
-  <div id="new-game-container" class="hidden">
-    <h2>Nueva partida</h2>
+  <!-- ============================= -->
+  <!-- CAMPAÑA -->
+  <!-- ============================= -->
+  <div id="screen-campaign" class="screen">
+    <h1>¿Qué campaña deseas jugar?</h1>
 
-    <input
-      id="new-save-name"
-      class="name-input"
-      placeholder="Nombre de la partida">
+    <div class="player-grid">
+      <div class="player-card" onclick="selectCampaign('normal')">
+        CAMPAÑA NORMAL
+      </div>
+      <div class="player-card disabled-mode">
+        MOUNT HAVOC<br><small>(Pronto)</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- JUGADORES -->
+  <!-- ============================= -->
+  <div id="screen-players" class="screen">
+    <h1>Cantidad de jugadores</h1>
+
+    <div class="player-grid">
+      <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
+      <div class="player-card" onclick="selectPlayers(2)">2</div>
+      <div class="player-card" onclick="selectPlayers(3)">3</div>
+      <div class="player-card" onclick="selectPlayers(4)">4</div>
+      <div class="player-card" onclick="selectPlayers(5)">5</div>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- PERSONAJES -->
+  <!-- ============================= -->
+  <div id="screen-characters" class="screen">
+    <h1>Selecciona personajes</h1>
+    <p id="selected-count">Seleccionados: 0 / 0</p>
+
+    <div class="character-grid">
+      <button class="character-btn" onclick="toggleCharacter('DAREON')">
+        DAREON<br><small>Espada 2 manos</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('LJONAR')">
+        LJONAR<br><small>Espada y Escudo</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('THOREG')">
+        THOREG<br><small>Martillo</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('MIRAH')">
+        MIRAH<br><small>Arco</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('HELEREN')">
+        HELEREN<br><small>Arco y Revólver</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('KARAH')">
+        KARAH<br><small>Espadas duales</small>
+      </button>
+    </div>
 
     <div class="nav-buttons">
-      <button class="btn" onclick="confirmNewGame()">💾</button>
-      <button class="btn red" onclick="cancelNewGame()">Cancelar</button>
+      <button id="btn-confirm" class="btn disabled" disabled>
+        Continuar
+      </button>
     </div>
   </div>
 
-  <!-- CARGAR PARTIDA -->
-  <div id="save-list-container" class="hidden">
-    <h2>Partidas guardadas</h2>
-
-    <div id="save-list"></div>
+  <!-- ============================= -->
+  <!-- NOMBRES DE JUGADORES -->
+  <!-- ============================= -->
+  <div id="screen-names" class="screen">
+    <h1>Nombres de jugadores</h1>
+    <div id="names-container"></div>
 
     <div class="nav-buttons">
-      <button class="btn red" onclick="closeLoadGame()">Volver</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================================================= -->
-<!-- CAMPAÑA -->
-<!-- ================================================= -->
-<div id="screen-campaign" class="screen">
-  <h1>¿Qué campaña deseas jugar?</h1>
-
-  <div class="player-grid">
-    <div class="player-card" onclick="selectCampaign('normal')">
-      CAMPAÑA NORMAL
-    </div>
-
-    <div class="player-card disabled-mode">
-      MOUNT HAVOC<br>
-      <small>(Pronto)</small>
+      <button id="btn-names-continue" class="btn disabled" disabled>
+        Continuar
+      </button>
     </div>
   </div>
 
-  <div class="nav-buttons">
-    <button class="btn red" onclick="backToStart()">⬅ Volver</button>
-  </div>
-</div>
+  <!-- ============================= -->
+  <!-- DIFICULTAD -->
+  <!-- ============================= -->
+  <div id="screen-difficulty" class="screen">
+    <h1>Dificultad</h1>
 
-<!-- ================================================= -->
-<!-- JUGADORES -->
-<!-- ================================================= -->
-<div id="screen-players" class="screen">
-  <h1>Cantidad de jugadores</h1>
-
-  <div class="player-grid">
-    <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
-    <div class="player-card" onclick="selectPlayers(2)">2</div>
-    <div class="player-card" onclick="selectPlayers(3)">3</div>
-    <div class="player-card" onclick="selectPlayers(4)">4</div>
-    <div class="player-card" onclick="selectPlayers(5)">5</div>
-  </div>
-
-  <div class="nav-buttons">
-    <button class="btn red" onclick="showScreen('screen-campaign')">
-      ⬅ Volver
-    </button>
-  </div>
-</div>
-
-<!-- ================================================= -->
-<!-- PERSONAJES -->
-<!-- ================================================= -->
-<div id="screen-characters" class="screen">
-  <h1>Selecciona personajes</h1>
-  <p id="selected-count">Seleccionados: 0 / 0</p>
-
-  <div class="character-grid">
-
-    <button class="character-btn"
-      onclick="toggleCharacter('DAREON')">
-      DAREON<br><small>Espada a dos manos</small>
-    </button>
-
-    <button class="character-btn"
-      onclick="toggleCharacter('LJONAR')">
-      LJONAR<br><small>Espada + Escudo</small>
-    </button>
-
-    <button class="character-btn"
-      onclick="toggleCharacter('THOREG')">
-      THOREG<br><small>Martillo</small>
-    </button>
-
-    <button class="character-btn"
-      onclick="toggleCharacter('MIRAH')">
-      MIRAH<br><small>Arco</small>
-    </button>
-
-    <button class="character-btn"
-      onclick="toggleCharacter('HELEREN')">
-      HELEREN<br><small>Arco + Revólver</small>
-    </button>
-
-    <button class="character-btn"
-      onclick="toggleCharacter('KARAH')">
-      KARAH<br><small>Espadas duales</small>
-    </button>
-
-  </div>
-
-  <div class="nav-buttons">
-    <button
-      id="btn-confirm"
-      class="btn disabled"
-      disabled
-      onclick="confirmCharacters()">
-      Continuar
-    </button>
-  </div>
-</div>
-
-<!-- ================================================= -->
-<!-- NOMBRES -->
-<!-- ================================================= -->
-<div id="screen-names" class="screen">
-  <h1>Nombres de jugadores</h1>
-
-  <div id="names-container"></div>
-
-  <div class="nav-buttons">
-    <button
-      id="btn-start-campaign"
-      class="btn disabled"
-      disabled
-      onclick="goToDifficulty()">
-      Continuar
-    </button>
-  </div>
-</div>
-
-<!-- ================================================= -->
-<!-- DIFICULTAD -->
-<!-- ================================================= -->
-<div id="screen-difficulty" class="screen">
-  <h1>Dificultad</h1>
-
-  <div class="player-grid">
-    <div class="player-card" onclick="selectDifficulty('normal')">
-      NORMAL
+    <div class="player-grid">
+      <div class="player-card" onclick="selectDifficulty('normal')">
+        NORMAL
+      </div>
+      <div class="player-card" onclick="selectDifficulty('pesadilla')">
+        PESADILLA
+      </div>
     </div>
 
-    <div class="player-card" onclick="selectDifficulty('pesadilla')">
-      PESADILLA
+    <div class="nav-buttons">
+      <button id="btn-difficulty-continue" class="btn disabled" disabled>
+        Continuar
+      </button>
     </div>
   </div>
 
-  <div class="nav-buttons">
-    <button class="btn" onclick="goToPrologue()">
-      Continuar
-    </button>
+  <!-- ============================= -->
+  <!-- PRÓLOGO -->
+  <!-- ============================= -->
+  <div id="screen-prologue" class="screen">
+    <h1>Prólogo de campaña</h1>
+
+    <p id="prologue-text">
+      (Texto del prólogo irá aquí)
+    </p>
   </div>
-</div>
 
-<!-- ================================================= -->
-<!-- PRÓLOGO -->
-<!-- ================================================= -->
-<div id="screen-prologue" class="screen">
-  <h1>Prólogo de campaña</h1>
-
-  <p id="prologue-text">
-    (Texto del prólogo aquí. Luego podrás extenderlo o agregar audio.)
-  </p>
-</div>
-
-<!-- JS -->
-<script src="main.js"></script>
-
+  <!-- JS -->
+  <script src="main.js?v=1.0.0"></script>
 </body>
 </html>
-
 
