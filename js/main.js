@@ -328,3 +328,30 @@ function startCampaign() {
   // Aquí después crearemos el Dashboard de campaña
 }
 
+// =======================================
+// CAMPAÑA INICIAL
+// =======================================
+
+let selectedCampaign = null;
+
+// Ir a pantalla selección campaña
+function goToCampaign() {
+  showScreen("screen-campaign");
+}
+
+// Volver al inicio
+function goBackToStart() {
+  showScreen("screen-start");
+}
+
+// Seleccionar campaña
+function selectCampaign(campaign) {
+  selectedCampaign = campaign;
+
+  console.log("Campaña seleccionada:", selectedCampaign);
+
+  if (selectedCampaign === "normal") {
+    showScreen("screen-setup");
+  }
+}
+
