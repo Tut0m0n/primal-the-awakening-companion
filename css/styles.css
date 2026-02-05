@@ -15,14 +15,62 @@ body {
   display: block;
 }
 
+/* =======================================
+   INICIO
+======================================= */
+#screen-start {
+  position: relative;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 20px;
+}
+
 .logo {
-  width: 90vw;        /* casi todo el ancho */
-  max-width: none;    /* sin límite */
+  width: 90vw;
+  max-width: none;
   height: auto;
   margin: 0;
   display: block;
 }
 
+.btn-start {
+  background: #000;
+  border: 2px solid #444;
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-start:hover {
+  background: #111;
+  border: 2px solid #8b0000;
+}
+
+.btn-mute {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #000;
+  border: 1px solid #444;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+/* =======================================
+   BOTONES GENERALES
+======================================= */
 .btn {
   padding: 15px 30px;
   font-size: 18px;
@@ -38,92 +86,14 @@ body {
   background: #b30000;
 }
 
-select {
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 15px;
-  border-radius: 5px;
-}
-
-.character-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 25px;
-}
-
-.character-item {
-  width: 320px;
-  background: #1a1a1a;
-  padding: 12px;
-  margin: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-
-.character-item:hover {
-  border: 2px solid #8b0000;
-}
-
-.character-item.selected {
-  border: 2px solid #00ff88;
-}
-
-.character-item.locked {
-  background: #333;
-  color: #888;
+.btn.disabled {
+  opacity: 0.4;
   cursor: not-allowed;
-  border: 2px solid transparent;
 }
 
-input {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  margin: 10px;
-  width: 250px;
-}
-
-#screen-start {
-  position: relative;
-  height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  gap: 20px;
-}
-
-.btn-start {
-  background: #000;
-  border: 2px solid #444;
-  padding: 8px 18px;
-  font-size: 14px;
-  border-radius: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.btn-start:hover {
-  background: #111;
-  border: 2px solid #8b0000;
-}
-
-.btn-mute {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: #000;
-  border: 1px solid #444;
-  font-size: 5px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
+/* =======================================
+   SELECCIÓN JUGADORES
+======================================= */
 .player-grid {
   display: grid;
   grid-template-columns: repeat(5, 70px);
@@ -143,21 +113,14 @@ input {
   justify-content: center;
   align-items: center;
 
-  font-size: 26px;
+  font-size: 20px;
   font-weight: bold;
   cursor: pointer;
 
   color: white;
   transition: 0.2s;
+  text-align: center;
 }
-
-.player-card.selected {
-  background: white;
-  color: black;
-  border: 2px solid black;
-  transform: scale(1.08);
-}
-
 
 .player-card:hover {
   background: white;
@@ -165,6 +128,11 @@ input {
   transform: scale(1.05);
 }
 
+.player-card.selected {
+  background: white;
+  color: black;
+  transform: scale(1.08);
+}
 
 .note {
   margin-top: 25px;
@@ -172,6 +140,9 @@ input {
   color: #333;
 }
 
+/* =======================================
+   SELECCIÓN PERSONAJES
+======================================= */
 .characters-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -199,7 +170,6 @@ input {
 .character-card.selected {
   background: black;
   color: white;
-  border: 2px solid black;
 }
 
 .character-card.disabled {
@@ -207,26 +177,9 @@ input {
   cursor: not-allowed;
 }
 
-.name-row {
-  margin: 15px auto;
-  max-width: 400px;
-  text-align: left;
-}
-
-.name-row input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 10px;
-  border: 2px solid black;
-  font-size: 15px;
-}
-
-.btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
+/* =======================================
+   NOMBRES DE JUGADORES
+======================================= */
 .name-row {
   margin: 15px auto;
   max-width: 500px;
@@ -262,9 +215,13 @@ input {
   background: #444;
 }
 
+/* =======================================
+   MODOS DESHABILITADOS
+======================================= */
 .disabled-mode {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
 
 
