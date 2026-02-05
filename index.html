@@ -17,28 +17,7 @@
       <source src="assets/audio/intro.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- =======================================
-     PANTALLA SELECCIÓN CAMPAÑA
-======================================= -->
-<section id="screen-campaign" class="screen">
-  <h1>¿Qué campaña deseas jugar?</h1>
-
-  <div class="player-grid">
-    <div class="player-card" onclick="selectCampaign('normal')">
-      NORMAL
-    </div>
-
-    <div class="player-card disabled-mode">
-      MOUNT HAVOC <br />
-      <small>(Pronto)</small>
-    </div>
-  </div>
-
-  <button class="btn" onclick="goBackToStart()">Volver</button>
-</section>
-
-
-    <!-- Botón mute/unmute -->
+     <!-- Botón mute/unmute -->
     <button class="btn btn-mute" onclick="toggleMusic()">🔊</button>
 
     <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
@@ -47,6 +26,30 @@
 
 
   </div>
+
+    <!-- =======================================
+     PANTALLA SELECCIÓN CAMPAÑA
+======================================= -->
+<section id="screen-campaign" class="screen">
+  <h1>¿Qué campaña deseas jugar?</h1>
+
+  <div class="player-grid">
+      <div class="player-card" onclick="selectCampaign('normal')">
+        NORMAL
+      </div>
+
+      <div class="player-card disabled-mode">
+        MOUNT HAVOC <br />
+        <small>(Pronto)</small>
+      </div>
+    </div>
+
+    <button class="btn" onclick="goBackToStart()">⬅ Volver</button>
+
+  </div>
+
+
+   
 
 
   <!-- ============================= -->
