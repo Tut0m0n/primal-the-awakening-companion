@@ -22,10 +22,32 @@
 
     <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
 
-    <button class="btn btn-start" onclick="goToCampaign()">ENTRAR</button>
+<!-- BOTÓN ENTRAR -->
+<button id="btn-enter" class="btn btn-start" onclick="openMainMenu()">
+  ENTRAR
+</button>
 
+<!-- MENÚ PRINCIPAL OCULTO -->
+<div id="main-menu" class="hidden">
 
+  <div class="menu-buttons">
+    <button class="btn" onclick="newGame()">➕ Nueva Partida</button>
+    <button class="btn" onclick="showSavedGames()">💾 Cargar Partida</button>
+
+    <button id="btn-delete-save" class="btn disabled" onclick="askDeleteSave()" disabled>
+      ❌ Borrar
+    </button>
   </div>
+
+  <div id="saved-games-list" class="saved-games-list hidden"></div>
+
+  <div class="menu-buttons">
+    <button id="btn-play-save" class="btn disabled" onclick="playSelectedSave()" disabled>
+      ✔ Jugar esta Partida
+    </button>
+  </div>
+
+</div>
 
     <!-- =======================================
      PANTALLA SELECCIÓN CAMPAÑA
