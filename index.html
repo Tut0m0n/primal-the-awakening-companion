@@ -8,66 +8,86 @@
 
 <body>
 
-  <!-- Pantalla de Inicio -->
+  <!-- ============================= -->
+  <!-- PANTALLA DE INICIO -->
+  <!-- ============================= -->
   <div id="screen-start" class="screen active">
-   <audio id="intro-music" autoplay loop>
-    <source src="assets/audio/intro.mp3" type="audio/mpeg">
-  </audio>
- <!-- Botón mute/unmute -->
-  <button class="btn btn-mute" onclick="toggleMusic()">🔊</button>
 
-  <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
+    <audio id="intro-music" autoplay loop>
+      <source src="assets/audio/intro.mp3" type="audio/mpeg">
+    </audio>
 
-  <button class="btn btn-start" onclick="goToSetup()">ENTRAR</button>
- </div>
+    <!-- Botón mute/unmute -->
+    <button class="btn btn-mute" onclick="toggleMusic()">🔊</button>
 
-  <!-- Pantalla Setup -->
- <div id="screen-setup" class="screen">
-  <h1>Configurar partida</h1>
-  <p>Selecciona cantidad de jugadores:</p>
+    <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
 
-  <div class="player-grid">
-    <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
-    <div class="player-card" onclick="selectPlayers(2)">2</div>
-    <div class="player-card" onclick="selectPlayers(3)">3</div>
-    <div class="player-card" onclick="selectPlayers(4)">4</div>
-    <div class="player-card" onclick="selectPlayers(5)">5</div>
+    <button class="btn btn-start" onclick="goToSetup()">ENTRAR</button>
+
   </div>
 
-  <p class="note">
-    °°Si eliges SOLO, deberás seleccionar 2 personajes.
-    °°A mayor cantidad de personajes escojas, más aumentara el tiempo de juego.
-  </p>
-</div>
+
+  <!-- ============================= -->
+  <!-- PANTALLA SETUP (JUGADORES) -->
+  <!-- ============================= -->
+  <div id="screen-setup" class="screen">
+
+    <h1>Configurar partida</h1>
+    <p>Selecciona cantidad de jugadores:</p>
+
+    <div class="player-grid">
+      <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
+      <div class="player-card" onclick="selectPlayers(2)">2</div>
+      <div class="player-card" onclick="selectPlayers(3)">3</div>
+      <div class="player-card" onclick="selectPlayers(4)">4</div>
+      <div class="player-card" onclick="selectPlayers(5)">5</div>
+    </div>
+
+    <p class="note">
+      °°Si eliges SOLO, deberás seleccionar 2 personajes.
+      <br>
+      °°A mayor cantidad de personajes escojas, más aumentara el tiempo de juego.
+    </p>
+
+  </div>
 
 
-  <!-- Pantalla Selección -->
-  <<div id="screen-characters" class="screen">
-  <h1>Selecciona personajes</h1>
-  <p id="selection-info"></p>
+  <!-- ============================= -->
+  <!-- PANTALLA SELECCIÓN PERSONAJES -->
+  <!-- ============================= -->
+  <div id="screen-characters" class="screen">
 
-  <div id="characters-grid" class="characters-grid"></div>
+    <h1>Selecciona personajes</h1>
+    <p id="selection-info"></p>
 
- <button id="btn-confirm" class="btn disabled" onclick="confirmCharacters()" disabled>
-    Continuar
-  </button>
-  <button class="btn" onclick="goBackToPlayers()">⬅ Volver</button>
+    <div id="characters-grid" class="characters-grid"></div>
 
-</div>
+    <button id="btn-confirm" class="btn disabled" onclick="confirmCharacters()" disabled>
+      Continuar
+    </button>
 
-  <!-- Pantalla nombres -->
+    <button class="btn" onclick="goBackToPlayers()">⬅ Volver</button>
+
+  </div>
+
+
+  <!-- ============================= -->
+  <!-- PANTALLA NOMBRES -->
+  <!-- ============================= -->
   <div id="screen-names" class="screen">
-  <h1>Asignar Jugadores</h1>
-  <p>Escribe quién jugará con cada personaje:</p>
 
-  <div id="names-form"></div>
+    <h1>Asignar Jugadores</h1>
+    <p>Escribe quién jugará con cada personaje:</p>
 
-  <button class="btn" onclick="goBackToCharacters()">⬅ Volver</button>
-  <button class="btn" onclick="startGame()">Iniciar Campaña</button>
-</div>
+    <div id="names-form"></div>
 
-<script src="js/main.js"></script>
+    <button class="btn" onclick="goBackToCharacters()">⬅ Volver</button>
+    <button class="btn" onclick="startGame()">Iniciar Campaña</button>
+
+  </div>
+
+
+  <script src="js/main.js"></script>
+
 </body>
 </html>
-
-
