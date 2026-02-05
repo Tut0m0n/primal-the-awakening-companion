@@ -30,6 +30,10 @@
   gap: 20px;
 }
 
+#main-menu {
+  margin-top: 20px;
+}
+
 .logo {
   width: 90vw;
   max-width: none;
@@ -231,9 +235,10 @@
 
 .menu-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 320px;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  max-width: 700px;
   margin: 20px auto;
 }
 
@@ -279,6 +284,23 @@
 
 .mini-btn:hover {
   background: #444;
+}
+
+#main-menu .btn {
+  background: black;
+  border: 2px solid white;
+  outline: 2px solid darkred;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 12px;
+  margin-top: 0px;
+  min-width: 180px;
+}
+
+#main-menu .btn:hover {
+  background: #111;
+  border: 2px solid #ffdddd;
+  outline: 2px solid red;
 }
 
 
