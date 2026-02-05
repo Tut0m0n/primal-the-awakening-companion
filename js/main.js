@@ -1,184 +1,208 @@
 console.log("Primal App iniciada");
 
-/* ==========================================
+/* ============================================================
    VARIABLES GLOBALES
-========================================== */
+============================================================ */
+let selectedCampaign = null;
 let playersCount = 0;
-let selectedPlayers = null;
 let selectedCharacters = [];
-let playersNames = {};
+let playerNames = {};
+let selectedDifficulty = null;
 
-// =======================================
-// SISTEMA DE GUARDADO LOCAL
-// =======================================
-
-let saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
-let selectedSaveIndex = null;
 let currentSave = null;
+let selectedSave = null;
+let deleteMode = false;
 
 
-/* ==========================================
-   LISTA DE PERSONAJES
-========================================== */
-const characters = [
-  { id: "DAREON", name: "DAREON", title: "LA GRAN ESPADA", available: true },
-  { id: "LJONAR", name: "LJONAR", title: "ESCUDO Y ESPADA", available: true },
-  { id: "THOREG", name: "THOREG", title: "EL MARTILLO", available: true },
-  { id: "MIRAH", name: "MIRAH", title: "EL ARCO", available: true },
-  { id: "KARAH", name: "KARAH", title: "LAS ESPADAS DUALES", available: true },
-  { id: "HELEREN", name: "HELEREN", title: "EL ARCO PISTOLA", available: true },
-
-  { id: "ZARAYA", name: "ZARAYA", title: "LA LANZA", available: false },
-  { id: "DRUSK", name: "DRUSK", title: "EL TAMBOR DE GUERRA", available: false },
-];
-
-
-/* ==========================================
-   UTILIDAD: CAMBIO DE PANTALLAS
-========================================== */
+/* ============================================================
+   UTILIDAD: MOSTRAR PANTALLAS CON FADE
+============================================================ */
 function showScreen(screenId) {
-  document.querySelectorAll(".screen").forEach((screen) => {
+  document.querySelectorAll(".screen").forEach(screen => {
     screen.classList.remove("active");
   });
 
-  document.getElementById(screenId).classList.add("active");
+  const target = document.getElementById(screenId);
+  if (target) {
+    target.classList.add("active");
+  }
 }
 
 
-/* ==========================================
-   PANTALLA INICIO
-========================================== */
-function goToSetup() {
+/* ============================================================
+   MÚSICA INTRO
+============================================================ */
+function playMusic() {
   const music = document.getElementById("intro-music");
+  if (!music) return;
 
-  if (music) {
-    music.play().catch(() => {
-      console.log("Autoplay bloqueado hasta interacción del usuario.");
-    });
-  }
-
-  showScreen("screen-setup");
+  music.play().catch(() => {
+    console.log("Autoplay bloqueado. Se activará con interacción.");
+  });
 }
 
 function toggleMusic() {
   const music = document.getElementById("intro-music");
-  if (!music) return;
+  const btn = document.getElementById("btn-mute");
+
+  if (!music || !btn) return;
 
   if (music.paused) {
     music.play();
+    btn.innerText = "🔊";
   } else {
     music.pause();
+    btn.innerText = "🔇";
   }
 }
 
 
-/* ==========================================
-   PANTALLA SETUP (SELECCIÓN DE JUGADORES)
-========================================== */
-function selectPlayers(num) {
-  playersCount = num;
-  selectedPlayers = num;
+/* ============================================================
+   MENÚ INICIO (ENTRAR -> MOSTRAR BOTONES)
+============================================================ */
+function showMainMenu() {
+  playMusic();
+
+  const enterBtn = document.getElementById("btn-enter");
+  const menu = document.getElementById("main-menu");
+
+  if (enterBtn) enterBtn.style.display = "none";
+  if (menu) menu.classList.remove("hidden");
+}
+
+function hideMainMenu() {
+  const menu = document.getElementById("main-menu");
+  if (menu) menu.classList.add("hidden");
+}
+
+
+/* ============================================================
+   BOTÓN GUARDAR / SALIR (VISIBLE SOLO EN PARTIDA)
+============================================================ */
+function showSaveExitButton() {
+  const btn = document.getElementById("btn-save-exit");
+  if (btn) btn.classList.remove("hidden");
+}
+
+function hideSaveExitButton() {
+  const btn = document.getElementById("btn-save-exit");
+  if (btn) btn.classList.add("hidden");
+}
+
+
+/* ============================================================
+   NUEVA PARTIDA
+============================================================ */
+function newGame() {
+  selectedSave = null;
+  currentSave = {
+    name: prompt("Nombre de la partida:", "Nueva Partida") || "Nueva Partida",
+    campaign: null,
+    playersCount: 0,
+    characters: [],
+    playerNames: {},
+    difficulty: null
+  };
+
+  hideMainMenu();
+  showSaveExitButton();
+
+  showScreen("screen-campaign");
+}
+
+
+/* ============================================================
+   SELECCIÓN CAMPAÑA
+============================================================ */
+function selectCampaign(type) {
+  selectedCampaign = type;
+
+  if (currentSave) {
+    currentSave.campaign = type;
+  }
+
+  showScreen("screen-players");
+}
+
+function goBackToStart() {
+  showScreen("screen-start");
+}
+
+function goBackToCampaign() {
+  showScreen("screen-campaign");
+}
+
+
+/* ============================================================
+   SELECCIÓN NÚMERO DE JUGADORES
+============================================================ */
+function selectPlayers(count) {
+  playersCount = count;
+
+  if (playersCount === 1) {
+    playersCount = 2; // SOLO siempre usa 2 personajes
+  }
 
   selectedCharacters = [];
-  playersNames = {};
+  playerNames = {};
 
-  renderPlayers();
-  renderCharacters();
+  if (currentSave) {
+    currentSave.playersCount = playersCount;
+    currentSave.characters = [];
+    currentSave.playerNames = {};
+  }
 
+  updateSelectedCount();
   showScreen("screen-characters");
 }
 
-function renderPlayers() {
-  const cards = document.querySelectorAll(".player-card");
-
-  cards.forEach((card) => {
-    card.classList.remove("selected");
-
-    // SOLO
-    if (card.innerText.trim() === "SOLO" && selectedPlayers === 1) {
-      card.classList.add("selected");
-    }
-
-    // NÚMEROS 2-5
-    if (parseInt(card.innerText) === selectedPlayers) {
-      card.classList.add("selected");
-    }
-  });
-}
-
 function goBackToPlayers() {
-  showScreen("screen-setup");
+  showScreen("screen-players");
 }
 
 
-/* ==========================================
-   PANTALLA PERSONAJES
-========================================== */
-function getRequiredCharacters() {
-  if (playersCount === 1) return 2;
-  return playersCount;
-}
-
-function renderCharacters() {
-  const grid = document.getElementById("characters-grid");
-  grid.innerHTML = "";
-
-  const requiredCharacters = getRequiredCharacters();
-
-  characters.forEach((char) => {
-    const card = document.createElement("div");
-    card.classList.add("character-card");
-
-    if (!char.available) {
-      card.classList.add("disabled");
-    }
-
-    if (selectedCharacters.includes(char.id)) {
-      card.classList.add("selected");
-    }
-
-    card.innerHTML = `
-      <div style="font-size:18px;">${char.name}</div>
-      <div style="font-size:13px; font-weight:normal;">${char.title}</div>
-      ${char.available ? "" : "<div style='margin-top:8px; font-size:12px;'>Pronto...</div>"}
-    `;
-
-    if (char.available) {
-      card.onclick = () => toggleCharacter(char.id);
-    }
-
-    grid.appendChild(card);
-  });
-
-  document.getElementById("selection-info").innerText =
-    `Seleccionados: ${selectedCharacters.length} / ${requiredCharacters}`;
-
-  updateConfirmButton();
-}
-
-function toggleCharacter(charId) {
-  const requiredCharacters = getRequiredCharacters();
-
-  if (selectedCharacters.includes(charId)) {
-    selectedCharacters = selectedCharacters.filter((id) => id !== charId);
+/* ============================================================
+   SELECCIÓN DE PERSONAJES
+============================================================ */
+function toggleCharacter(character) {
+  if (selectedCharacters.includes(character)) {
+    selectedCharacters = selectedCharacters.filter(c => c !== character);
   } else {
-    if (selectedCharacters.length >= requiredCharacters) {
-      alert("Ya seleccionaste el máximo permitido.");
-      return;
+    if (selectedCharacters.length < playersCount) {
+      selectedCharacters.push(character);
     }
-    selectedCharacters.push(charId);
   }
 
-  renderCharacters();
+  updateCharacterButtons();
+  updateSelectedCount();
+  checkConfirmButton();
 }
 
-function updateConfirmButton() {
+function updateCharacterButtons() {
+  document.querySelectorAll(".character-btn").forEach(btn => {
+    const name = btn.innerText.split("\n")[0].trim();
+
+    if (selectedCharacters.includes(name)) {
+      btn.classList.add("selected");
+    } else {
+      btn.classList.remove("selected");
+    }
+  });
+}
+
+function updateSelectedCount() {
+  const counter = document.getElementById("selected-count");
+  if (counter) {
+    counter.innerText = `Seleccionados: ${selectedCharacters.length} / ${playersCount}`;
+  }
+}
+
+function checkConfirmButton() {
   const btn = document.getElementById("btn-confirm");
+
   if (!btn) return;
 
-  const requiredCharacters = getRequiredCharacters();
-
-  if (selectedCharacters.length === requiredCharacters) {
+  if (selectedCharacters.length === playersCount) {
     btn.disabled = false;
     btn.classList.remove("disabled");
   } else {
@@ -188,375 +212,286 @@ function updateConfirmButton() {
 }
 
 function confirmCharacters() {
-  const requiredCharacters = getRequiredCharacters();
+  if (selectedCharacters.length !== playersCount) return;
 
-  if (selectedCharacters.length !== requiredCharacters) {
-    alert(`Debes seleccionar exactamente ${requiredCharacters} personajes.`);
-    return;
+  if (currentSave) {
+    currentSave.characters = [...selectedCharacters];
   }
 
-  goToNames();
-}
-
-
-/* ==========================================
-   PANTALLA NOMBRES (ASIGNAR JUGADORES)
-========================================== */
-function goToNames() {
-  const container = document.getElementById("names-form");
-  container.innerHTML = "";
-
-  selectedCharacters.forEach((charId) => {
-    const char = characters.find((c) => c.id === charId);
-
-    const div = document.createElement("div");
-    div.classList.add("name-row");
-
-    div.innerHTML = `
-      <label><b>${char.name}</b> - ${char.title}</label>
-
-      <input type="text" id="player-${charId}" placeholder="Nombre del jugador..." />
-
-      <div class="name-actions">
-        <button onclick="saveName('${charId}')">✔</button>
-        <button onclick="editName('${charId}')">✏️</button>
-        <button onclick="clearName('${charId}')">❌</button>
-      </div>
-    `;
-
-    container.appendChild(div);
-  });
-
+  buildNamesScreen();
   showScreen("screen-names");
 }
-
 
 function goBackToCharacters() {
   showScreen("screen-characters");
 }
 
-function startGame() {
-  playersNames = {};
 
-  for (const charId of selectedCharacters) {
-    const input = document.getElementById(`player-${charId}`);
+/* ============================================================
+   PANTALLA NOMBRES DE JUGADORES (GUARDAR / EDITAR / BORRAR)
+============================================================ */
+function buildNamesScreen() {
+  const container = document.getElementById("names-container");
+  if (!container) return;
 
-    if (!input) {
-      alert("Error: input no encontrado.");
-      return;
-    }
+  container.innerHTML = "";
 
-    if (input.value.trim() === "") {
-      alert("Debes ingresar todos los nombres.");
-      return;
-    }
+  selectedCharacters.forEach(character => {
+    const row = document.createElement("div");
+    row.className = "name-row";
 
-    if (!input.disabled) {
-      alert("Debes guardar todos los nombres (✔) antes de continuar.");
-      return;
-    }
+    row.innerHTML = `
+      <div class="name-label">${character}</div>
 
-    playersNames[charId] = input.value.trim();
-  }
+      <input id="name-${character}" class="name-input" type="text" placeholder="Nombre jugador..." />
 
-  console.log("Jugadores asignados:", playersNames);
+      <button class="icon-btn" onclick="saveName('${character}')">✓</button>
+      <button class="icon-btn" onclick="editName('${character}')">✏</button>
+      <button class="icon-btn" onclick="clearName('${character}')">✖</button>
+    `;
 
-  goToDifficulty();
+    container.appendChild(row);
+  });
 }
 
-
-function saveName(charId) {
-  const input = document.getElementById(`player-${charId}`);
+function saveName(character) {
+  const input = document.getElementById(`name-${character}`);
   if (!input) return;
 
-  if (input.value.trim() === "") {
-    alert("No puedes guardar un nombre vacío.");
-    return;
-  }
+  const value = input.value.trim();
+  if (value === "") return;
+
+  playerNames[character] = value;
 
   input.disabled = true;
+
+  if (currentSave) {
+    currentSave.playerNames = playerNames;
+  }
+
+  checkStartCampaignButton();
 }
 
-function editName(charId) {
-  const input = document.getElementById(`player-${charId}`);
+function editName(character) {
+  const input = document.getElementById(`name-${character}`);
   if (!input) return;
 
   input.disabled = false;
   input.focus();
 }
 
-function clearName(charId) {
-  const input = document.getElementById(`player-${charId}`);
+function clearName(character) {
+  const input = document.getElementById(`name-${character}`);
   if (!input) return;
 
   input.value = "";
   input.disabled = false;
-  input.focus();
+
+  delete playerNames[character];
+
+  if (currentSave) {
+    currentSave.playerNames = playerNames;
+  }
+
+  checkStartCampaignButton();
 }
 
-let difficulty = null;
+function checkStartCampaignButton() {
+  const btn = document.getElementById("btn-start-campaign");
+  if (!btn) return;
+
+  if (Object.keys(playerNames).length === selectedCharacters.length) {
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+  } else {
+    btn.disabled = true;
+    btn.classList.add("disabled");
+  }
+}
+
+function goToDifficulty() {
+  showScreen("screen-difficulty");
+}
 
 function goBackToNames() {
   showScreen("screen-names");
 }
 
-function goToDifficulty() {
-  difficulty = null;
 
-  const btn = document.getElementById("btn-difficulty");
-  btn.disabled = true;
-  btn.classList.add("disabled");
+/* ============================================================
+   DIFICULTAD
+============================================================ */
+function selectDifficulty(diff) {
+  selectedDifficulty = diff;
 
-  showScreen("screen-difficulty");
-}
-
-function selectDifficulty(mode) {
-  difficulty = mode;
-
-  const btn = document.getElementById("btn-difficulty");
-  btn.disabled = false;
-  btn.classList.remove("disabled");
-
-  console.log("Dificultad seleccionada:", difficulty);
-}
-
-function startCampaign() {
-  if (!difficulty) {
-    alert("Selecciona una dificultad.");
-    return;
+  if (currentSave) {
+    currentSave.difficulty = diff;
   }
 
-  alert("Campaña iniciada: " + difficulty);
+  alert("Dificultad seleccionada: " + diff.toUpperCase());
 
-  console.log("Campaña iniciada con:");
-  console.log("Personajes:", selectedCharacters);
-  console.log("Jugadores:", playersNames);
-  console.log("Dificultad:", difficulty);
-
-  // Aquí después crearemos el Dashboard de campaña
+  updateSave();
 }
 
-// =======================================
-// CAMPAÑA INICIAL
-// =======================================
 
-let selectedCampaign = null;
+/* ============================================================
+   GUARDAR PARTIDA COMPLETA
+============================================================ */
+function updateSave() {
+  if (!currentSave) return;
 
-// Ir a pantalla selección campaña
-function goToCampaign() {
-  const music = document.getElementById("intro-music");
+  const saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
 
-  if (music) {
-    music.play().catch(() => {
-      console.log("Autoplay bloqueado hasta interacción del usuario.");
-    });
+  const existingIndex = saves.findIndex(s => s.name === currentSave.name);
+
+  if (existingIndex !== -1) {
+    saves[existingIndex] = currentSave;
+  } else {
+    saves.push(currentSave);
   }
 
-  showScreen("screen-campaign");
+  localStorage.setItem("primal_saves", JSON.stringify(saves));
 }
 
 
-// Volver al inicio
-function goBackToStart() {
+/* ============================================================
+   GUARDAR / SALIR
+============================================================ */
+function saveAndExit() {
+  updateSave();
+
+  currentSave = null;
+  selectedSave = null;
+  selectedCampaign = null;
+  playersCount = 0;
+  selectedCharacters = [];
+  playerNames = {};
+  selectedDifficulty = null;
+
+  hideSaveExitButton();
+
+  const enterBtn = document.getElementById("btn-enter");
+  if (enterBtn) enterBtn.style.display = "block";
+
+  const menu = document.getElementById("main-menu");
+  if (menu) menu.classList.add("hidden");
+
+  const savesContainer = document.getElementById("save-list-container");
+  if (savesContainer) savesContainer.classList.add("hidden");
+
   showScreen("screen-start");
 }
 
-// Seleccionar campaña
-function selectCampaign(campaign) {
-  selectedCampaign = campaign;
 
-  console.log("Campaña seleccionada:", selectedCampaign);
-
-  if (selectedCampaign === "normal") {
-    showScreen("screen-setup");
-  }
-}
-
-// =======================================
-// MENÚ PRINCIPAL (NUEVA / CARGAR / BORRAR)
-// =======================================
-
-function openMainMenu() {
-  const enterBtn = document.getElementById("btn-enter");
-  const menu = document.getElementById("main-menu");
-  const music = document.getElementById("intro-music");
-
-  if (music) {
-    music.volume = 0.5;
-    music.play().catch(() => {
-      console.log("Autoplay bloqueado hasta interacción del usuario.");
-    });
-  }
-
-  if (enterBtn) enterBtn.style.display = "none";
-  if (menu) menu.classList.remove("hidden");
-}
-
-
-function newGame() {
-  const name = prompt("Nombre de la nueva partida:");
-
-  if (!name || name.trim() === "") {
-    alert("Debes ingresar un nombre válido.");
-    return;
-  }
-
-  const saveName = name.trim();
-
-  const exists = saves.find((s) => s.name === saveName);
-  if (exists) {
-    alert("Ya existe una partida con ese nombre.");
-    return;
-  }
-
-  currentSave = {
-    name: saveName,
-    campaign: null,
-    playersCount: null,
-    selectedCharacters: [],
-    playersNames: {},
-    difficulty: null
-  };
-
-  saves.push(currentSave);
-  localStorage.setItem("primal_saves", JSON.stringify(saves));
-
-  alert(`Partida creada: ${saveName}`);
-
-  showScreen("screen-campaign");
-}
-
+/* ============================================================
+   CARGAR PARTIDAS GUARDADAS
+============================================================ */
 function showSavedGames() {
-  const list = document.getElementById("saved-games-list");
+  const container = document.getElementById("save-list-container");
+  if (container) container.classList.remove("hidden");
+
+  renderSaveList();
+}
+
+function renderSaveList() {
+  const list = document.getElementById("save-list");
+  const actions = document.getElementById("save-actions");
+  const btnPlay = document.getElementById("btn-play-save");
+  const btnDelete = document.getElementById("btn-delete-save");
+  const btnDeleteMode = document.getElementById("btn-delete-mode");
+
   if (!list) return;
 
-  list.classList.remove("hidden");
   list.innerHTML = "";
+  selectedSave = null;
 
-  selectedSaveIndex = null;
-  disableSaveActions();
+  if (actions) actions.classList.add("hidden");
 
-  if (saves.length === 0) {
-    list.innerHTML = "<p>No hay partidas guardadas.</p>";
-    return;
+  if (btnPlay) {
+    btnPlay.disabled = true;
+    btnPlay.classList.add("disabled");
   }
 
-  saves.forEach((save, index) => {
-    const item = document.createElement("div");
-    item.classList.add("save-item");
+  if (btnDelete) {
+    btnDelete.disabled = true;
+    btnDelete.classList.add("disabled");
+  }
 
-    item.innerHTML = `
+  const saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
+
+  if (btnDeleteMode) {
+    btnDeleteMode.disabled = saves.length === 0;
+    btnDeleteMode.classList.toggle("disabled", saves.length === 0);
+  }
+
+  saves.forEach(save => {
+    const div = document.createElement("div");
+    div.className = "save-item";
+
+    div.innerHTML = `
       <span>${save.name}</span>
-      <button class="mini-btn">Seleccionar</button>
+      <button onclick="selectSave('${save.name}')">Seleccionar</button>
     `;
 
-    item.querySelector("button").addEventListener("click", () => {
-      selectedSaveIndex = index;
-      enableSaveActions();
-      highlightSelectedSave(index);
-    });
-
-    list.appendChild(item);
+    list.appendChild(div);
   });
 }
 
-function highlightSelectedSave(index) {
-  const items = document.querySelectorAll(".save-item");
+function selectSave(name) {
+  const saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
+  selectedSave = saves.find(s => s.name === name);
 
-  items.forEach((item, i) => {
-    if (i === index) item.classList.add("selected-save");
-    else item.classList.remove("selected-save");
-  });
-}
+  const actions = document.getElementById("save-actions");
+  const btnPlay = document.getElementById("btn-play-save");
+  const btnDelete = document.getElementById("btn-delete-save");
 
-function disableSaveActions() {
-  const playBtn = document.getElementById("btn-play-save");
-  const deleteBtn = document.getElementById("btn-delete-save");
+  if (actions) actions.classList.remove("hidden");
 
-  if (playBtn) {
-    playBtn.disabled = true;
-    playBtn.classList.add("disabled");
+  if (btnPlay) {
+    btnPlay.disabled = false;
+    btnPlay.classList.remove("disabled");
   }
 
-  if (deleteBtn) {
-    deleteBtn.disabled = true;
-    deleteBtn.classList.add("disabled");
-  }
-}
-
-function enableSaveActions() {
-  const playBtn = document.getElementById("btn-play-save");
-  const deleteBtn = document.getElementById("btn-delete-save");
-
-  if (playBtn) {
-    playBtn.disabled = false;
-    playBtn.classList.remove("disabled");
-  }
-
-  if (deleteBtn) {
-    deleteBtn.disabled = false;
-    deleteBtn.classList.remove("disabled");
+  if (btnDelete) {
+    btnDelete.disabled = false;
+    btnDelete.classList.remove("disabled");
   }
 }
 
 function playSelectedSave() {
-  if (selectedSaveIndex === null) return;
+  if (!selectedSave) return;
 
-  currentSave = saves[selectedSaveIndex];
+  currentSave = selectedSave;
 
-  alert(`Cargando partida: ${currentSave.name}`);
+  selectedCampaign = currentSave.campaign;
+  playersCount = currentSave.playersCount;
+  selectedCharacters = currentSave.characters || [];
+  playerNames = currentSave.playerNames || {};
+  selectedDifficulty = currentSave.difficulty;
 
-  if (!currentSave.campaign) {
-    showScreen("screen-campaign");
-    return;
-  }
+  hideMainMenu();
+  showSaveExitButton();
 
-  if (!currentSave.playersCount) {
-    showScreen("screen-setup");
-    return;
-  }
-
-  if (currentSave.selectedCharacters.length > 0 && Object.keys(currentSave.playersNames).length === 0) {
-    selectedCharacters = currentSave.selectedCharacters;
-    goToNames();
-    return;
-  }
-
-  if (!currentSave.difficulty) {
-    showScreen("screen-difficulty");
-    return;
-  }
-
-  alert("Partida completamente cargada. (Próximo paso: ir a campaña)");
+  showScreen("screen-players");
 }
 
-function askDeleteSave() {
-  if (selectedSaveIndex === null) return;
+function toggleDeleteMode() {
+  deleteMode = !deleteMode;
+  alert(deleteMode ? "Modo borrado activado" : "Modo borrado desactivado");
+}
 
-  const saveName = saves[selectedSaveIndex].name;
+function deleteSelectedSave() {
+  if (!selectedSave) return;
 
-  const confirmDelete = confirm(`¿Seguro que quieres borrar la partida "${saveName}"?`);
-
+  const confirmDelete = confirm("¿Estás seguro de borrar esta partida?");
   if (!confirmDelete) return;
 
-  saves.splice(selectedSaveIndex, 1);
+  let saves = JSON.parse(localStorage.getItem("primal_saves")) || [];
+  saves = saves.filter(s => s.name !== selectedSave.name);
+
   localStorage.setItem("primal_saves", JSON.stringify(saves));
 
-  selectedSaveIndex = null;
-
-  alert("Partida borrada.");
-
-  showSavedGames();
+  selectedSave = null;
+  renderSaveList();
 }
 
-function updateSave() {
-  if (!currentSave) return;
-
-  const index = saves.findIndex((s) => s.name === currentSave.name);
-  if (index === -1) return;
-
-  saves[index] = currentSave;
-  localStorage.setItem("primal_saves", JSON.stringify(saves));
-
-  console.log("Guardado actualizado:", currentSave.name);
-}
