@@ -1,119 +1,125 @@
 /* =======================
    ESTADO GLOBAL
 ======================= */
-let playersCount = 0;                 // SOLO = 2 (regla tuya)
-let selectedCharacters = [];
-let playerNames = {};
-let currentSave = null;
-let selectedCampaign = null;
- 
+
+let gameState = {
+  saveName: "",
+  campaign: null,
+  playersCount: 0,
+  characters: [],
+  playerNames: {},
+  difficulty: null,
+  screen: "screen-start"
+};
+
 /* =======================
-   UTILIDAD PANTALLAS
+   GUARDAR / CARGAR
 ======================= */
+
+function saveGameState() {
+  localStorage.setItem("primal-save", JSON.stringify(gameState));
+}
+
+function loadGameState() {
+  const saved = localStorage.getItem("primal-save");
+  if (!saved) return;
+  gameState = JSON.parse(saved);
+}
+
+/* =======================
+   PANTALLAS
+======================= */
+
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s =>
     s.classList.remove("active")
   );
   document.getElementById(id).classList.add("active");
-}
-
-/* =======================
-   MÚSICA
-======================= */
-function toggleMusic() {
-  const music = document.getElementById("intro-music");
-  const btn = document.getElementById("btn-mute");
-
-  if (music.paused) {
-    music.play();
-    btn.textContent = "🔊";
-  } else {
-    music.pause();
-    btn.textContent = "🔇";
-  }
+  gameState.screen = id;
+  saveGameState();
 }
 
 /* =======================
    INICIO
 ======================= */
-function showMainMenu() {
-  document.getElementById("enter-container").classList.add("hidden");
-  document.getElementById("main-menu").classList.remove("hidden");
-  document.getElementById("intro-music").play().catch(() => {});
-}
 
-function goBackToStart() {
-  showScreen("screen-start");
-  document.getElementById("main-menu").classList.add("hidden");
-  document.getElementById("enter-container").classList.remove("hidden");
-}
-
-/* =======================
-   NUEVA PARTIDA
-======================= */
 function newGame() {
-  currentSave = {};
-  selectedCampaign = null;
+  const name = prompt("Nombre de la partida:");
+  if (!name) return;
+
+  gameState = {
+    saveName: name,
+    campaign: null,
+    playersCount: 0,
+    characters: [],
+    playerNames: {},
+    difficulty: null,
+    screen: "screen-campaign"
+  };
+
+  saveGameState();
   showScreen("screen-campaign");
-  document.getElementById("btn-save-exit").classList.remove("hidden");
+}
+
+function continueGame() {
+  loadGameState();
+  if (gameState.screen) {
+    showScreen(gameState.screen);
+  }
 }
 
 /* =======================
    CAMPAÑA
 ======================= */
-function selectCampaign(campaign) {
-  selectedCampaign = campaign;
-  showScreen("screen-players");
-}
 
-function goBackToCampaign() {
-  showScreen("screen-campaign");
+function selectCampaign(campaign) {
+  gameState.campaign = campaign;
+  saveGameState();
+  showScreen("screen-players");
 }
 
 /* =======================
    JUGADORES
 ======================= */
-function selectPlayers(count) {
-  playersCount = count === 1 ? 2 : count; // regla SOLO = 2
-  selectedCharacters = [];
-  playerNames = {};
-  updateSelectedCount();
-  updateCharactersUI();
-  showScreen("screen-characters");
-}
 
-function goBackToPlayers() {
-  showScreen("screen-players");
+function selectPlayers(count) {
+  gameState.playersCount = Math.min(count, 5);
+  gameState.characters = [];
+  gameState.playerNames = {};
+  saveGameState();
+  showScreen("screen-characters");
 }
 
 /* =======================
    PERSONAJES
 ======================= */
+
 function toggleCharacter(name) {
-  if (selectedCharacters.includes(name)) {
-    selectedCharacters = selectedCharacters.filter(c => c !== name);
-  } else if (selectedCharacters.length < playersCount) {
-    selectedCharacters.push(name);
+  if (gameState.characters.includes(name)) {
+    gameState.characters =
+      gameState.characters.filter(c => c !== name);
+  } else if (gameState.characters.length < gameState.playersCount) {
+    gameState.characters.push(name);
   }
+
   updateCharactersUI();
+  saveGameState();
 }
 
 function updateCharactersUI() {
   document.querySelectorAll(".character-btn").forEach(btn => {
-    const name = btn.innerText.split("\n")[0];
-    btn.classList.toggle("selected", selectedCharacters.includes(name));
+    const name = btn.dataset.char;
+    btn.classList.toggle(
+      "selected",
+      gameState.characters.includes(name)
+    );
   });
 
-  updateSelectedCount();
-
-  const confirm = document.getElementById("btn-confirm");
-  confirm.disabled = selectedCharacters.length !== playersCount;
-  confirm.classList.toggle("disabled", confirm.disabled);
-}
-
-function updateSelectedCount() {
   document.getElementById("selected-count").innerText =
-    `Seleccionados: ${selectedCharacters.length} / ${playersCount}`;
+    `Seleccionados: ${gameState.characters.length} / ${gameState.playersCount}`;
+
+  document.getElementById("btn-confirm").disabled =
+    gameState.characters.length !== gameState.playersCount;
 }
 
 function confirmCharacters() {
@@ -124,71 +130,75 @@ function confirmCharacters() {
 /* =======================
    NOMBRES
 ======================= */
-function buildNames() {
-  const container = document.getElementById("names-container");
-  container.innerHTML = "";
 
-  selectedCharacters.forEach(c => {
-    container.innerHTML += `
+function buildNames() {
+  const c = document.getElementById("names-container");
+  c.innerHTML = "";
+
+  gameState.characters.forEach(char => {
+    const saved = gameState.playerNames[char] || "";
+
+    c.innerHTML += `
       <div class="name-row">
-        <strong>${c}</strong>
-        <input
-          id="name-${c}"
-          class="name-input"
-          placeholder="Nombre jugador"
-          oninput="validateNames()"
-        >
+        <strong>${char}</strong>
+        <input id="input-${char}" value="${saved}">
+        <button onclick="savePlayerName('${char}')">💾</button>
+        <button onclick="editPlayerName('${char}')">✏️</button>
+        <button onclick="deletePlayerName('${char}')">❌</button>
       </div>
     `;
   });
-
-  validateNames();
 }
 
-function validateNames() {
-  const btn = document.getElementById("btn-start-campaign");
-  let valid = true;
-
-  selectedCharacters.forEach(c => {
-    const input = document.getElementById(`name-${c}`);
-    if (!input || input.value.trim() === "") {
-      valid = false;
-    } else {
-      playerNames[c] = input.value.trim();
-    }
-  });
-
-  btn.disabled = !valid;
-  btn.classList.toggle("disabled", !valid);
+function savePlayerName(char) {
+  const input = document.getElementById(`input-${char}`);
+  if (!input.value.trim()) return;
+  gameState.playerNames[char] = input.value.trim();
+  saveGameState();
 }
 
-function goBackToCharacters() {
-  showScreen("screen-characters");
+function editPlayerName(char) {
+  document.getElementById(`input-${char}`).focus();
 }
 
-function goToDifficulty() {
-  showScreen("screen-difficulty");
-}
-
-function goBackToNames() {
-  showScreen("screen-names");
+function deletePlayerName(char) {
+  delete gameState.playerNames[char];
+  buildNames();
+  saveGameState();
 }
 
 /* =======================
    DIFICULTAD
 ======================= */
+
+function goToDifficulty() {
+  showScreen("screen-difficulty");
+}
+
 function selectDifficulty(diff) {
-  alert(
-    `Campaña: ${selectedCampaign.toUpperCase()}\n` +
-    `Jugadores: ${playersCount}\n` +
-    `Dificultad: ${diff.toUpperCase()}`
-  );
+  gameState.difficulty = diff;
+  saveGameState();
+  alert("Partida lista. Todo quedó guardado.");
 }
 
 /* =======================
    SALIR
 ======================= */
+
 function saveAndExit() {
-  location.reload();
+  saveGameState();
+  showScreen("screen-start");
 }
+
+/* =======================
+   INICIO AUTOMÁTICO
+======================= */
+
+window.onload = () => {
+  loadGameState();
+  if (gameState.screen) {
+    showScreen(gameState.screen);
+  }
+};
+
 
