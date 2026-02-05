@@ -206,7 +206,14 @@ function goToNames() {
 
     div.innerHTML = `
       <label><b>${char.name}</b> - ${char.title}</label>
+
       <input type="text" id="player-${charId}" placeholder="Nombre del jugador..." />
+
+      <div class="name-actions">
+        <button onclick="saveName('${charId}')">✔</button>
+        <button onclick="editName('${charId}')">✏️</button>
+        <button onclick="clearName('${charId}')">❌</button>
+      </div>
     `;
 
     container.appendChild(div);
@@ -214,6 +221,7 @@ function goToNames() {
 
   showScreen("screen-names");
 }
+
 
 function goBackToCharacters() {
   showScreen("screen-characters");
@@ -224,19 +232,99 @@ function startGame() {
 
   for (const charId of selectedCharacters) {
     const input = document.getElementById(`player-${charId}`);
-    const name = input.value.trim();
 
-    if (name === "") {
+    if (!input) {
+      alert("Error: input no encontrado.");
+      return;
+    }
+
+    if (input.value.trim() === "") {
       alert("Debes ingresar todos los nombres.");
       return;
     }
 
-    playersNames[charId] = name;
+    if (!input.disabled) {
+      alert("Debes guardar todos los nombres (✔) antes de continuar.");
+      return;
+    }
+
+    playersNames[charId] = input.value.trim();
   }
 
   console.log("Jugadores asignados:", playersNames);
-  alert("Jugadores guardados correctamente.");
 
-  // Aquí después vamos a la dificultad / campaña
+  goToDifficulty();
+}
+
+
+function saveName(charId) {
+  const input = document.getElementById(`player-${charId}`);
+  if (!input) return;
+
+  if (input.value.trim() === "") {
+    alert("No puedes guardar un nombre vacío.");
+    return;
+  }
+
+  input.disabled = true;
+}
+
+function editName(charId) {
+  const input = document.getElementById(`player-${charId}`);
+  if (!input) return;
+
+  input.disabled = false;
+  input.focus();
+}
+
+function clearName(charId) {
+  const input = document.getElementById(`player-${charId}`);
+  if (!input) return;
+
+  input.value = "";
+  input.disabled = false;
+  input.focus();
+}
+
+let difficulty = null;
+
+function goBackToNames() {
+  showScreen("screen-names");
+}
+
+function goToDifficulty() {
+  difficulty = null;
+
+  const btn = document.getElementById("btn-difficulty");
+  btn.disabled = true;
+  btn.classList.add("disabled");
+
+  showScreen("screen-difficulty");
+}
+
+function selectDifficulty(mode) {
+  difficulty = mode;
+
+  const btn = document.getElementById("btn-difficulty");
+  btn.disabled = false;
+  btn.classList.remove("disabled");
+
+  console.log("Dificultad seleccionada:", difficulty);
+}
+
+function startCampaign() {
+  if (!difficulty) {
+    alert("Selecciona una dificultad.");
+    return;
+  }
+
+  alert("Campaña iniciada: " + difficulty);
+
+  console.log("Campaña iniciada con:");
+  console.log("Personajes:", selectedCharacters);
+  console.log("Jugadores:", playersNames);
+  console.log("Dificultad:", difficulty);
+
+  // Aquí después crearemos el Dashboard de campaña
 }
 
