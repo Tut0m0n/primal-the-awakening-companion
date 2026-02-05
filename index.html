@@ -28,6 +28,12 @@
     💾 Guardar / Salir
   </button>
 
+  <!-- EXPORT / IMPORT JSON -->
+  <div id="json-controls" class="hidden">
+    <button class="btn" onclick="exportJSON()">📤 Exportar</button>
+    <button class="btn" onclick="importJSON()">📥 Importar</button>
+  </div>
+
   <!-- ============================= -->
   <!-- PANTALLA INICIO -->
   <!-- ============================= -->
@@ -90,6 +96,10 @@
         MOUNT HAVOC<br><small>(Pronto)</small>
       </div>
     </div>
+
+    <div class="nav-buttons">
+      <button class="btn red" onclick="goBackToMainMenu()">⬅ Volver</button>
+    </div>
   </div>
 
   <!-- ============================= -->
@@ -104,6 +114,10 @@
       <div class="player-card" onclick="selectPlayers(3)">3</div>
       <div class="player-card" onclick="selectPlayers(4)">4</div>
       <div class="player-card" onclick="selectPlayers(5)">5</div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn red" onclick="goBackToCampaign()">⬅ Volver</button>
     </div>
   </div>
 
@@ -139,11 +153,12 @@
       <button id="btn-confirm" class="btn disabled" disabled>
         Continuar
       </button>
+      <button class="btn red" onclick="goBackToPlayers()">⬅ Volver</button>
     </div>
   </div>
 
   <!-- ============================= -->
-  <!-- NOMBRES DE JUGADORES -->
+  <!-- NOMBRES -->
   <!-- ============================= -->
   <div id="screen-names" class="screen">
     <h1>Nombres de jugadores</h1>
@@ -153,6 +168,7 @@
       <button id="btn-names-continue" class="btn disabled" disabled>
         Continuar
       </button>
+      <button class="btn red" onclick="goBackToCharacters()">⬅ Volver</button>
     </div>
   </div>
 
@@ -175,6 +191,7 @@
       <button id="btn-difficulty-continue" class="btn disabled" disabled>
         Continuar
       </button>
+      <button class="btn red" onclick="goBackToNames()">⬅ Volver</button>
     </div>
   </div>
 
@@ -183,14 +200,12 @@
   <!-- ============================= -->
   <div id="screen-prologue" class="screen">
     <h1>Prólogo de campaña</h1>
-
-    <p id="prologue-text">
-      (Texto del prólogo irá aquí)
-    </p>
+    <p id="prologue-text">(Texto del prólogo irá aquí)</p>
   </div>
 
   <!-- JS -->
   <script src="main.js?v=1.0.0"></script>
 </body>
 </html>
+
 
