@@ -1,6 +1,22 @@
 let playersCount = 0;
 let selectedCharacters = [];
 let selectedPlayers = null;
+let playersNames = {};
+
+function startGame() {
+  playersNames = {};
+
+  selectedCharacters.forEach((charId) => {
+    const input = document.getElementById(`player-${charId}`);
+    playersNames[charId] = input.value.trim() || "Sin nombre";
+  });
+
+  console.log("Jugadores asignados:", playersNames);
+  alert("¡Jugadores guardados! (Mira la consola)");
+
+  // después aquí vamos a mandar al dashboard de campaña
+}
+
 
 const characters = [
   { id: "DAREON", name: "DAREON", title: "LA GRAN ESPADA", available: true },
