@@ -1,5 +1,6 @@
 let playersCount = 0;
 let selectedCharacters = [];
+let selectedPlayers = null;
 
 const characters = [
   { id: "DAREON", name: "DAREON", title: "LA GRAN ESPADA", available: true },
@@ -35,8 +36,10 @@ function goToSetup() {
 
 function selectPlayers(num) {
   playersCount = num;
+  selectedPlayers = num;
   selectedCharacters = [];
 
+ renderPlayers();
   renderCharacters();
   showScreen("screen-characters");
 }
@@ -177,3 +180,16 @@ function confirmCharacters() {
 
   goToNames();
 }
+
+function renderPlayers() {
+  const cards = document.querySelectorAll(".player-card");
+
+  cards.forEach((card) => {
+    card.classList.remove("selected");
+
+    if (parseInt(card.innerText) === selectedPlayers) {
+      card.classList.add("selected");
+    }
+  });
+}
+
