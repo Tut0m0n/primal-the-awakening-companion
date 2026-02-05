@@ -86,6 +86,32 @@
 
   </div>
 
+    <!-- ============================= -->
+  <!-- PANTALLA DIFICULTAD -->
+  <!-- ============================= -->
+  <div id="screen-difficulty" class="screen">
+
+    <h1>Selecciona dificultad</h1>
+    <p>Elige el modo de campaña:</p>
+
+    <div class="player-grid">
+      <div class="player-card" onclick="selectDifficulty('Normal')">Normal</div>
+      <div class="player-card" onclick="selectDifficulty('Pesadilla')">Pesadilla</div>
+
+      <div class="player-card disabled-mode">
+        Mount Havoc
+        <div style="font-size:12px; margin-top:5px;">Pronto...</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="goBackToNames()">⬅ Volver</button>
+
+    <button id="btn-difficulty" class="btn disabled" disabled onclick="startCampaign()">
+      Continuar a campaña
+    </button>
+
+  </div>
+
 
   <script src="js/main.js"></script>
 
