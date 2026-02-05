@@ -135,7 +135,7 @@ input {
 .player-card {
   width: 70px;
   height: 70px;
-  background: white;
+  background: black;
   border: 2px solid black;
   border-radius: 12px;
 
@@ -147,14 +147,17 @@ input {
   font-weight: bold;
   cursor: pointer;
 
+  color: white;
   transition: 0.2s;
 }
 
+
 .player-card:hover {
-  background: black;
-  color: white;
+  background: white;
+  color: black;
   transform: scale(1.05);
 }
+
 
 .note {
   margin-top: 25px;
