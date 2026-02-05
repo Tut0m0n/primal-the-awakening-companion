@@ -5,9 +5,9 @@ body {
   text-align: center;
 }
 
-/* ===============================
-   UTILIDADES
-================================ */
+/* =======================
+   UTILIDAD
+======================= */
 
 .hidden {
   display: none !important;
@@ -35,15 +35,42 @@ body {
   }
 }
 
-/* ===============================
-   LOGO & AUDIO
-================================ */
+/* =======================
+   LOGO
+======================= */
 
 .logo {
   width: 60%;
   max-width: 500px;
   margin: 40px auto;
 }
+
+/* =======================
+   BOTONES GENERALES
+======================= */
+
+.btn {
+  background: black;
+  color: white;
+  border-radius: 12px;
+  padding: 10px 18px;
+  margin: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn.red {
+  background: darkred;
+}
+
+.btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =======================
+   BOTONES FIJOS
+======================= */
 
 .btn-mute,
 .btn-save-exit {
@@ -60,88 +87,17 @@ body {
   right: 15px;
 }
 
-/* ===============================
-   BOTONES GENERALES
-================================ */
-
-.btn {
-  background: black;
-  color: white;
-  border-radius: 12px;
-  padding: 10px 18px;
-  margin: 6px;
-  cursor: pointer;
-  border: none;
-  font-size: 14px;
-}
-
-.btn.red {
-  background: darkred;
-}
-
-.btn.green {
-  background: darkgreen;
-}
-
-.btn.gray {
-  background: gray;
-  cursor: not-allowed;
-}
-
-.btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ===============================
+/* =======================
    MENÚ PRINCIPAL
-================================ */
+======================= */
 
-#main-menu {
-  margin-top: 30px;
-}
-
-/* ===============================
-   NUEVA PARTIDA / CARGAR
-================================ */
-
-.new-game-box {
+.menu-buttons {
   margin-top: 20px;
 }
 
-.new-game-box input {
-  padding: 8px;
-  border-radius: 8px;
-  width: 220px;
-  margin-right: 8px;
-}
-
-/* ===============================
-   LISTA DE PARTIDAS
-================================ */
-
-.save-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin: 8px 0;
-}
-
-.save-row span {
-  min-width: 160px;
-  text-align: left;
-}
-
-.save-row button {
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-/* ===============================
-   SELECCIÓN JUGADORES
-================================ */
+/* =======================
+   GRILLAS
+======================= */
 
 .player-grid {
   display: flex;
@@ -152,24 +108,33 @@ body {
 }
 
 .player-card {
-  width: 120px;
-  height: 60px;
+  width: 160px;
+  height: 70px;
   border: 2px solid black;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  background: white;
+  transition: background 0.2s, color 0.2s;
 }
 
-.player-card.disabled-mode {
+/* SELECCIONADO */
+.player-card.selected {
+  background: black;
+  color: white;
+}
+
+/* MODO DESHABILITADO */
+.disabled-mode {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* ===============================
+/* =======================
    PERSONAJES
-================================ */
+======================= */
 
 .character-grid {
   display: grid;
@@ -179,11 +144,12 @@ body {
 }
 
 .character-btn {
-  height: 80px;
+  height: 90px;
   border: 2px solid black;
   border-radius: 12px;
   background: white;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
 .character-btn.selected {
@@ -191,49 +157,68 @@ body {
   color: white;
 }
 
-/* ===============================
-   NOMBRES JUGADORES
-================================ */
+/* =======================
+   NOMBRES DE JUGADORES
+======================= */
 
 .name-row {
-  margin: 12px auto;
+  margin: 14px auto;
 }
 
 .name-input {
   padding: 8px;
   border-radius: 8px;
-  width: 220px;
+  width: 200px;
+  margin: 6px;
 }
 
-/* ===============================
-   DIFICULTAD
-================================ */
-
-.difficulty-buttons {
-  margin-top: 20px;
+.name-input:disabled {
+  background: #e0e0e0;
+  color: #555;
 }
 
-/* ===============================
+/* Botones pequeños (ticket, editar, borrar) */
+.name-row button {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.name-row button:hover {
+  opacity: 0.8;
+}
+
+/* =======================
+   NAVEGACIÓN
+======================= */
+
+.nav-buttons {
+  margin-top: 30px;
+}
+
+/* =======================
    PRÓLOGO
-================================ */
+======================= */
 
-.prologue-box {
-  max-width: 700px;
-  margin: 0 auto;
-  text-align: left;
-  line-height: 1.5;
+#screen-prologue p {
+  max-width: 600px;
+  margin: 30px auto;
+  font-size: 1.1em;
+  line-height: 1.6em;
 }
 
-/* ===============================
+/* =======================
    RESPONSIVE
-================================ */
+======================= */
 
 @media (max-width: 768px) {
   .character-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .save-row span {
-    min-width: 120px;
+  .player-card {
+    width: 140px;
   }
 }
