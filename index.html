@@ -48,16 +48,23 @@
 
   <div id="characters-grid" class="characters-grid"></div>
 
-  <button class="btn" onclick="confirmCharacters()">Confirmar selección</button>
+ <button id="btn-confirm" class="btn disabled" onclick="confirmCharacters()" disabled>
+    Continuar
+  </button>
+  <button class="btn" onclick="goBackToPlayers()">⬅ Volver</button>
+
 </div>
 
   <!-- Pantalla nombres -->
   <div id="screen-names" class="screen">
-    <h1>Nombres de jugadores</h1>
-    <div id="names-form"></div>
+  <h1>Asignar Jugadores</h1>
+  <p>Escribe quién jugará con cada personaje:</p>
 
-    <button class="btn" onclick="savePlayers()">Guardar</button>
-  </div>
+  <div id="names-form"></div>
+
+  <button class="btn" onclick="goBackToCharacters()">⬅ Volver</button>
+  <button class="btn" onclick="startGame()">Iniciar Campaña</button>
+</div>
 
 <script src="js/main.js"></script>
 </body>
