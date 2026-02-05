@@ -1,7 +1,3 @@
-/* =======================
-   ESTADO GLOBAL
-======================= */
-
 let gameState = {
   saveName: null,
   campaign: null,
@@ -12,10 +8,7 @@ let gameState = {
   currentScreen: "screen-start"
 };
 
-/* =======================
-   GUARDADO
-======================= */
-
+/* ======================= */
 function saveGameState() {
   localStorage.setItem("primal-save", JSON.stringify(gameState));
 }
@@ -27,23 +20,15 @@ function loadGameState() {
   return true;
 }
 
-/* =======================
-   PANTALLAS
-======================= */
-
+/* ======================= */
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s =>
-    s.classList.remove("active")
-  );
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   gameState.currentScreen = id;
   saveGameState();
 }
 
-/* =======================
-   MÚSICA (NO TOCAR)
-======================= */
-
+/* ======================= */
 function toggleMusic() {
   const music = document.getElementById("intro-music");
   const btn = document.getElementById("btn-mute");
@@ -57,10 +42,7 @@ function toggleMusic() {
   }
 }
 
-/* =======================
-   INICIO
-======================= */
-
+/* ======================= */
 function showMainMenu() {
   document.getElementById("enter-container").classList.add("hidden");
   document.getElementById("main-menu").classList.remove("hidden");
@@ -86,20 +68,14 @@ function newGame() {
   document.getElementById("btn-save-exit").classList.remove("hidden");
 }
 
-/* =======================
-   CAMPAÑA
-======================= */
-
+/* ======================= */
 function selectCampaign(type) {
   gameState.campaign = type;
   saveGameState();
   showScreen("screen-players");
 }
 
-/* =======================
-   JUGADORES (MAX 5)
-======================= */
-
+/* ======================= */
 function selectPlayers(count) {
   gameState.playersCount = Math.min(count, 5);
   gameState.selectedCharacters = [];
@@ -109,16 +85,14 @@ function selectPlayers(count) {
   showScreen("screen-characters");
 }
 
-/* =======================
-   PERSONAJES
-======================= */
-
+/* ======================= */
 function toggleCharacter(name) {
-  if (gameState.selectedCharacters.includes(name)) {
-    gameState.selectedCharacters =
-      gameState.selectedCharacters.filter(c => c !== name);
-  } else if (gameState.selectedCharacters.length < gameState.playersCount) {
-    gameState.selectedCharacters.push(name);
+  const arr = gameState.selectedCharacters;
+
+  if (arr.includes(name)) {
+    gameState.selectedCharacters = arr.filter(c => c !== name);
+  } else if (arr.length < gameState.playersCount) {
+    arr.push(name);
   }
 
   updateCharactersUI();
@@ -127,18 +101,14 @@ function toggleCharacter(name) {
 
 function updateCharactersUI() {
   document.querySelectorAll(".character-btn").forEach(btn => {
-    const name = btn.innerText.split("\n")[0];
-    btn.classList.toggle(
-      "selected",
-      gameState.selectedCharacters.includes(name)
-    );
+    const name = btn.textContent;
+    btn.classList.toggle("selected", gameState.selectedCharacters.includes(name));
   });
 
   updateSelectedCount();
 
   const confirm = document.getElementById("btn-confirm");
-  confirm.disabled =
-    gameState.selectedCharacters.length !== gameState.playersCount;
+  confirm.disabled = gameState.selectedCharacters.length !== gameState.playersCount;
   confirm.classList.toggle("disabled", confirm.disabled);
 }
 
@@ -152,21 +122,16 @@ function confirmCharacters() {
   showScreen("screen-names");
 }
 
-/* =======================
-   NOMBRES (GUARDAR / EDITAR / BORRAR)
-======================= */
-
+/* ======================= */
 function buildNames() {
   const container = document.getElementById("names-container");
   container.innerHTML = "";
 
   gameState.selectedCharacters.forEach(c => {
-    const savedName = gameState.playerNames[c] || "";
-
     container.innerHTML += `
       <div class="name-row">
         <strong>${c}</strong>
-        <input id="name-${c}" class="name-input" value="${savedName}">
+        <input id="name-${c}" class="name-input" value="${gameState.playerNames[c] || ''}">
         <button onclick="savePlayerName('${c}')">💾</button>
         <button onclick="editPlayerName('${c}')">✏️</button>
         <button onclick="deletePlayerName('${c}')">❌</button>
@@ -174,15 +139,15 @@ function buildNames() {
     `;
   });
 
-  updateStartCampaignButton();
+  updateStartButton();
 }
 
 function savePlayerName(char) {
-  const input = document.getElementById(`name-${char}`);
-  if (!input.value.trim()) return;
-  gameState.playerNames[char] = input.value.trim();
+  const val = document.getElementById(`name-${char}`).value.trim();
+  if (!val) return;
+  gameState.playerNames[char] = val;
   saveGameState();
-  updateStartCampaignButton();
+  updateStartButton();
 }
 
 function editPlayerName(char) {
@@ -195,20 +160,14 @@ function deletePlayerName(char) {
   saveGameState();
 }
 
-function updateStartCampaignButton() {
+function updateStartButton() {
   const btn = document.getElementById("btn-start-campaign");
-  const filled =
-    Object.keys(gameState.playerNames).length ===
-    gameState.selectedCharacters.length;
-
-  btn.disabled = !filled;
-  btn.classList.toggle("disabled", !filled);
+  const ok = Object.keys(gameState.playerNames).length === gameState.selectedCharacters.length;
+  btn.disabled = !ok;
+  btn.classList.toggle("disabled", !ok);
 }
 
-/* =======================
-   DIFICULTAD
-======================= */
-
+/* ======================= */
 function goToDifficulty() {
   showScreen("screen-difficulty");
 }
@@ -216,30 +175,20 @@ function goToDifficulty() {
 function selectDifficulty(diff) {
   gameState.difficulty = diff;
   saveGameState();
-  alert("Partida guardada correctamente.");
+  alert("Partida guardada");
 }
 
-/* =======================
-   SALIR
-======================= */
-
+/* ======================= */
 function saveAndExit() {
   saveGameState();
   location.reload();
 }
 
-/* =======================
-   RESTAURAR AL RECARGAR
-======================= */
-
+/* ======================= */
 window.onload = () => {
   if (loadGameState()) {
     showScreen(gameState.currentScreen);
-    if (gameState.currentScreen === "screen-characters") {
-      updateCharactersUI();
-    }
-    if (gameState.currentScreen === "screen-names") {
-      buildNames();
-    }
+    if (gameState.currentScreen === "screen-characters") updateCharactersUI();
+    if (gameState.currentScreen === "screen-names") buildNames();
   }
 };
