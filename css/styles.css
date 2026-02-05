@@ -206,3 +206,18 @@ input {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.name-row {
+  margin: 15px auto;
+  max-width: 400px;
+  text-align: left;
+}
+
+.name-row input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 2px solid black;
+  font-size: 15px;
+}
