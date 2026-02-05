@@ -19,20 +19,33 @@
   <source src="assets/audio/intro.mp3" type="audio/mpeg">
 </audio>
 
+<!-- BOTONES FIJOS -->
 <button id="btn-mute" class="btn btn-mute" onclick="toggleMusic()">🔊</button>
-<button id="btn-save-exit" class="btn btn-save-exit hidden" onclick="saveAndExit()">💾 Guardar / Salir</button>
+<button id="btn-save-exit" class="btn btn-save-exit hidden" onclick="saveAndExit()">
+  💾 Guardar / Salir
+</button>
 
-<!-- ================= INICIO ================= -->
+<!-- ================= PANTALLA INICIO ================= -->
 <div id="screen-start" class="screen active">
 
   <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
 
+  <!-- BOTÓN ENTRAR -->
   <div id="enter-container">
-    <button class="btn btn-start" onclick="showMainMenu()">ENTRAR</button>
+    <button class="btn btn-start" onclick="enterApp()">ENTRAR</button>
   </div>
 
+  <!-- MENÚ PRINCIPAL -->
   <div id="main-menu" class="hidden">
-    <button class="btn" onclick="newGame()">➕ Nueva Partida</button>
+    <button class="btn menu-btn" onclick="openNewGame()">➕ Nueva Partida</button>
+    <button class="btn menu-btn" onclick="openLoadGame()">💾 Cargar Partida</button>
+  </div>
+
+  <!-- LISTA DE PARTIDAS -->
+  <div id="save-list-container" class="hidden">
+    <h2>Partidas Guardadas</h2>
+    <div id="save-list"></div>
+    <button class="btn red" onclick="closeLoadGame()">⬅ Volver</button>
   </div>
 </div>
 
@@ -42,15 +55,17 @@
 
   <div class="player-grid">
     <div class="player-card" onclick="selectCampaign('normal')">NORMAL</div>
-    <div class="player-card disabled-mode">MOUNT HAVOC<br><small>(Pronto)</small></div>
+    <div class="player-card disabled-mode">
+      MOUNT HAVOC<br><small>(Pronto)</small>
+    </div>
   </div>
 
-  <button class="btn red" onclick="showScreen('screen-start')">⬅ Volver</button>
+  <button class="btn red" onclick="backToStart()">⬅ Volver</button>
 </div>
 
 <!-- ================= JUGADORES ================= -->
 <div id="screen-players" class="screen">
-  <h1>Cantidad de jugadores</h1>
+  <h1>Cantidad de jugadores (máx 5)</h1>
 
   <div class="player-grid">
     <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
@@ -76,7 +91,9 @@
     <button class="character-btn" onclick="toggleCharacter('KARAH')">KARAH</button>
   </div>
 
-  <button id="btn-confirm" class="btn disabled" disabled onclick="confirmCharacters()">Continuar</button>
+  <button id="btn-confirm" class="btn disabled" disabled onclick="confirmCharacters()">
+    Continuar
+  </button>
 </div>
 
 <!-- ================= NOMBRES ================= -->
@@ -84,7 +101,9 @@
   <h1>Nombres de jugadores</h1>
   <div id="names-container"></div>
 
-  <button id="btn-start-campaign" class="btn disabled" disabled onclick="goToDifficulty()">Continuar</button>
+  <button id="btn-start-campaign" class="btn disabled" disabled onclick="goToDifficulty()">
+    Continuar
+  </button>
 </div>
 
 <!-- ================= DIFICULTAD ================= -->
@@ -100,5 +119,6 @@
 <script src="main.js"></script>
 </body>
 </html>
+
 
 
