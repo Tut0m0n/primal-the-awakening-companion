@@ -549,3 +549,14 @@ function askDeleteSave() {
   showSavedGames();
 }
 
+function updateSave() {
+  if (!currentSave) return;
+
+  const index = saves.findIndex((s) => s.name === currentSave.name);
+  if (index === -1) return;
+
+  saves[index] = currentSave;
+  localStorage.setItem("primal_saves", JSON.stringify(saves));
+
+  console.log("Guardado actualizado:", currentSave.name);
+}
