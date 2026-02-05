@@ -6,7 +6,7 @@ let selectedCharacters = [];
 let playerNames = {};
 let currentSave = null;
 let selectedCampaign = null;
-
+ 
 /* =======================
    UTILIDAD PANTALLAS
 ======================= */
