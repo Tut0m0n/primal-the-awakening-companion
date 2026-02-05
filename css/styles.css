@@ -225,5 +225,61 @@
   cursor: not-allowed;
 }
 
+/* =======================================
+   MENÚ PRINCIPAL (GUARDADOS)
+======================================= */
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+  margin: 20px auto;
+}
+
+.saved-games-list {
+  max-width: 400px;
+  margin: 20px auto;
+  border: 2px solid black;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.save-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.save-item:last-child {
+  border-bottom: none;
+}
+
+.selected-save {
+  background: black;
+  color: white;
+  border-radius: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+.mini-btn {
+  background: black;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.mini-btn:hover {
+  background: #444;
+}
+
 
 
