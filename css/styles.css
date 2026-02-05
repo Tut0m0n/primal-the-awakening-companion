@@ -1,4 +1,4 @@
-body {
+|body {
   margin: 0;
   background: white;
   color: black;
@@ -103,8 +103,8 @@ body {
 }
 
 .player-card {
-  width: 70px;
-  height: 70px;
+  width: 1400px;
+  height: 90px;
   background: black;
   border: 2px solid black;
   border-radius: 12px;
