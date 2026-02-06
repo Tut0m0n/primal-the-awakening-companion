@@ -5,13 +5,7 @@ body {
   text-align: center;
 }
 
-/* =======================
-   UTILIDAD
-======================= */
-
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 .screen {
   display: none;
@@ -20,34 +14,18 @@ body {
   animation: fade 0.4s ease;
 }
 
-.screen.active {
-  display: block;
-}
+.screen.active { display: block; }
 
 @keyframes fade {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-/* =======================
-   LOGO
-======================= */
 
 .logo {
   width: 60%;
   max-width: 500px;
   margin: 40px auto;
 }
-
-/* =======================
-   BOTONES GENERALES
-======================= */
 
 .btn {
   background: black;
@@ -59,45 +37,12 @@ body {
   border: none;
 }
 
-.btn.red {
-  background: darkred;
-}
+.btn.red { background: darkred; }
 
 .btn.disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-
-/* =======================
-   BOTONES FIJOS
-======================= */
-
-.btn-mute,
-.btn-save-exit {
-  position: fixed;
-  top: 15px;
-  z-index: 1000;
-}
-
-.btn-mute {
-  left: 15px;
-}
-
-.btn-save-exit {
-  right: 15px;
-}
-
-/* =======================
-   MENÚ PRINCIPAL
-======================= */
-
-.menu-buttons {
-  margin-top: 20px;
-}
-
-/* =======================
-   GRILLAS
-======================= */
 
 .player-grid {
   display: flex;
@@ -108,7 +53,7 @@ body {
 }
 
 .player-card {
-  width: 160px;
+  width: 140px;
   height: 70px;
   border: 2px solid black;
   border-radius: 12px;
@@ -117,24 +62,12 @@ body {
   justify-content: center;
   cursor: pointer;
   background: white;
-  transition: background 0.2s, color 0.2s;
 }
 
-/* SELECCIONADO */
-.player-card.selected {
-  background: black;
-  color: white;
-}
-
-/* MODO DESHABILITADO */
 .disabled-mode {
   opacity: 0.4;
   cursor: not-allowed;
 }
-
-/* =======================
-   PERSONAJES
-======================= */
 
 .character-grid {
   display: grid;
@@ -144,12 +77,11 @@ body {
 }
 
 .character-btn {
-  height: 90px;
+  height: 80px;
   border: 2px solid black;
   border-radius: 12px;
   background: white;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
 }
 
 .character-btn.selected {
@@ -157,68 +89,59 @@ body {
   color: white;
 }
 
-/* =======================
-   NOMBRES DE JUGADORES
-======================= */
+.nav-buttons {
+  margin-top: 30px;
+}
 
 .name-row {
-  margin: 14px auto;
+  margin: 12px auto;
 }
 
 .name-input {
   padding: 8px;
   border-radius: 8px;
   width: 200px;
-  margin: 6px;
 }
 
-.name-input:disabled {
-  background: #e0e0e0;
-  color: #555;
+.btn-mute,
+.btn-save-exit {
+  position: fixed;
+  top: 15px;
+  z-index: 1000;
 }
 
-/* Botones pequeños (ticket, editar, borrar) */
-.name-row button {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  margin-left: 4px;
-}
+.btn-mute { left: 15px; }
 
-.name-row button:hover {
-  opacity: 0.8;
-}
-
-/* =======================
-   NAVEGACIÓN
-======================= */
-
-.nav-buttons {
-  margin-top: 30px;
-}
-
-/* =======================
-   PRÓLOGO
-======================= */
-
-#screen-prologue p {
-  max-width: 600px;
-  margin: 30px auto;
-  font-size: 1.1em;
-  line-height: 1.6em;
-}
-
-/* =======================
-   RESPONSIVE
-======================= */
+.btn-save-exit { right: 15px; }
 
 @media (max-width: 768px) {
   .character-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
 
-  .player-card {
-    width: 140px;
-  }
+/* ==================================================
+   NUEVO – SELECCIONES VISIBLES (CAMPAÑA / JUGADORES / DIFICULTAD)
+   ================================================== */
+
+.player-card.selected {
+  background: black;
+  color: white;
+}
+
+/* ==================================================
+   NUEVO – EXPORT / IMPORT JSON
+   ================================================== */
+
+#json-controls {
+  position: fixed;
+  top: 70px;
+  left: 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+#json-controls .btn {
+  margin-bottom: 6px;
 }
