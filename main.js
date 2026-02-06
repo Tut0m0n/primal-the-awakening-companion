@@ -1,87 +1,155 @@
-/* =======================
-   ESTADO GLOBAL
-======================= */
-let playersCount = 0;
-let selectedCharacters = [];
-let playerNames = {};
-let campaignType = null;
-let difficulty = null;
-let currentScreen = "screen-start";
-let currentSaveId = null;
+/*************************************************
+ * ESTADO GLOBAL
+ *************************************************/
+let gameState = {
+  campaign: null,
+  playersCount: 0,
+  selectedCharacters: [],
+  playerNames: [],
+  difficulty: null
+};
 
-/* =======================
-   STORAGE
-======================= */
-const STORAGE_KEY = "primal_saves";
+const SAVE_KEY = "primal_save";
 
-/* =======================
-   UTILIDAD GENERAL
-======================= */
-function $(id) {
+/*************************************************
+ * UTILIDADES
+ *************************************************/
+function qs(id) {
   return document.getElementById(id);
 }
 
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  const el = $(id);
-  if (!el) return;
-  el.classList.add("active");
-  currentScreen = id;
-  autoSave();
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+  });
+  qs(id).classList.add("active");
 }
 
-/* =======================
-   MÚSICA
-======================= */
+/*************************************************
+ * AUDIO
+ *************************************************/
 function toggleMusic() {
-  const music = $("intro-music");
-  const btn = $("btn-mute");
+  const audio = qs("intro-music");
+  const btn = qs("btn-mute");
 
-  if (!music) return;
-
-  if (music.paused) {
-    music.play().catch(() => {});
+  if (audio.paused) {
+    audio.play();
     btn.textContent = "🔊";
   } else {
-    music.pause();
+    audio.pause();
     btn.textContent = "🔇";
   }
 }
 
-/* =======================
-   INICIO
-======================= */
+/*************************************************
+ * GUARDADO AUTOMÁTICO
+ *************************************************/
+function autoSave() {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+}
+
+/*************************************************
+ * GUARDAR / SALIR
+ *************************************************/
+function saveAndExit() {
+  autoSave();
+  location.reload();
+}
+
+/*************************************************
+ * EXPORT / IMPORT
+ *************************************************/
+function exportJSON() {
+  const blob = new Blob(
+    [JSON.stringify(gameState, null, 2)],
+    { type: "application/json" }
+  );
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "primal_save.json";
+  link.click();
+}
+
+function importJSON(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    gameState = JSON.parse(e.target.result);
+    autoSave();
+    alert("Partida importada correctamente");
+    location.reload();
+  };
+  reader.readAsText(file);
+}
+
+/*************************************************
+ * INICIO
+ *************************************************/
 function showMainMenu() {
-  $("enter-container").classList.add("hidden");
-  $("main-menu").classList.remove("hidden");
-  $("intro-music")?.play().catch(() => {});
+  qs("main-menu").classList.remove("hidden");
 }
 
 function goBackToStart() {
-  showScreen("screen-start");
-  $("main-menu").classList.add("hidden");
-  $("enter-container").classList.remove("hidden");
+  qs("save-list-container").classList.add("hidden");
+  qs("main-menu").classList.remove("hidden");
 }
 
-/* =======================
-   NUEVA PARTIDA
-======================= */
+/*************************************************
+ * NUEVA / CARGAR PARTIDA
+ *************************************************/
 function newGame() {
-  currentSaveId = crypto.randomUUID();
-  playersCount = 0;
-  selectedCharacters = [];
-  playerNames = {};
-  campaignType = null;
-  difficulty = null;
-
+  gameState = {
+    campaign: null,
+    playersCount: 0,
+    selectedCharacters: [],
+    playerNames: [],
+    difficulty: null
+  };
+  autoSave();
   showScreen("screen-campaign");
 }
 
-/* =======================
-   CAMPAÑA
-======================= */
+function showSavedGames() {
+  const saved = localStorage.getItem(SAVE_KEY);
+  const container = qs("save-list");
+
+  container.innerHTML = "";
+
+  if (!saved) {
+    container.innerHTML = "<p>No hay partidas guardadas</p>";
+  } else {
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Cargar partida";
+    btn.onclick = () => {
+      gameState = JSON.parse(saved);
+      resumeGame();
+    };
+    container.appendChild(btn);
+  }
+
+  qs("main-menu").classList.add("hidden");
+  qs("save-list-container").classList.remove("hidden");
+}
+
+function resumeGame() {
+  if (!gameState.campaign) return showScreen("screen-campaign");
+  if (!gameState.playersCount) return showScreen("screen-players");
+  if (gameState.selectedCharacters.length === 0) return showScreen("screen-characters");
+  if (gameState.playerNames.length === 0) return showScreen("screen-names");
+  if (!gameState.difficulty) return showScreen("screen-difficulty");
+
+  showScreen("screen-prologue");
+}
+
+/*************************************************
+ * CAMPAÑA
+ *************************************************/
 function selectCampaign(type) {
-  campaignType = type;
+  gameState.campaign = type;
+  autoSave();
   showScreen("screen-players");
 }
 
@@ -89,13 +157,15 @@ function goBackToCampaign() {
   showScreen("screen-campaign");
 }
 
-/* =======================
-   JUGADORES
-======================= */
+/*************************************************
+ * JUGADORES
+ *************************************************/
 function selectPlayers(count) {
-  playersCount = count;
-  selectedCharacters = [];
-  playerNames = {};
+  gameState.playersCount = count === 1 ? 2 : count; // SOLO = 2
+  gameState.selectedCharacters = [];
+  gameState.playerNames = [];
+  autoSave();
+
   updateSelectedCount();
   showScreen("screen-characters");
 }
@@ -104,205 +174,106 @@ function goBackToPlayers() {
   showScreen("screen-players");
 }
 
-/* =======================
-   PERSONAJES
-======================= */
+/*************************************************
+ * PERSONAJES
+ *************************************************/
 function toggleCharacter(name) {
-  if (selectedCharacters.includes(name)) {
-    selectedCharacters = selectedCharacters.filter(c => c !== name);
-  } else if (selectedCharacters.length < playersCount) {
-    selectedCharacters.push(name);
+  const max = gameState.playersCount;
+  const idx = gameState.selectedCharacters.indexOf(name);
+
+  if (idx >= 0) {
+    gameState.selectedCharacters.splice(idx, 1);
+  } else {
+    if (gameState.selectedCharacters.length >= max) return;
+    gameState.selectedCharacters.push(name);
   }
-  updateCharactersUI();
-}
 
-function updateCharactersUI() {
-  document.querySelectorAll(".character-btn").forEach(btn => {
-    const name = btn.dataset.char;
-    btn.classList.toggle("selected", selectedCharacters.includes(name));
-  });
-
-  updateSelectedCount();
-
-  const confirm = $("btn-confirm");
-  confirm.disabled = selectedCharacters.length !== playersCount;
-  confirm.classList.toggle("disabled", confirm.disabled);
-}
-
-function updateSelectedCount() {
-  $("selected-count").innerText =
-    `Seleccionados: ${selectedCharacters.length} / ${playersCount}`;
-}
-
-function confirmCharacters() {
-  buildNames();
-  showScreen("screen-names");
-}
-
-/* =======================
-   NOMBRES
-======================= */
-function buildNames() {
-  const container = $("names-container");
-  container.innerHTML = "";
-
-  selectedCharacters.forEach(c => {
-    const value = playerNames[c] || "";
-    container.innerHTML += `
-      <div class="name-row">
-        <strong>${c}</strong><br>
-        <input
-          class="name-input"
-          value="${value}"
-          oninput="setPlayerName('${c}', this.value)"
-          placeholder="Nombre jugador"
-        />
-      </div>
-    `;
-  });
-
-  validateNames();
-}
-
-function setPlayerName(char, value) {
-  playerNames[char] = value.trim();
-  validateNames();
+  updateCharacterUI();
   autoSave();
 }
 
-function validateNames() {
-  const valid = selectedCharacters.every(c => playerNames[c]?.length > 0);
-  const btn = $("btn-start-campaign");
-  btn.disabled = !valid;
-  btn.classList.toggle("disabled", !valid);
+function updateCharacterUI() {
+  const max = gameState.playersCount;
+
+  document.querySelectorAll(".character-btn").forEach(btn => {
+    const char = btn.dataset.char;
+    btn.classList.toggle(
+      "selected",
+      gameState.selectedCharacters.includes(char)
+    );
+  });
+
+  qs("selected-count").textContent =
+    `Seleccionados: ${gameState.selectedCharacters.length} / ${max}`;
+
+  const btn = qs("btn-confirm");
+  btn.disabled = gameState.selectedCharacters.length !== max;
+  btn.classList.toggle(
+    "disabled",
+    gameState.selectedCharacters.length !== max
+  );
+}
+
+function updateSelectedCount() {
+  qs("selected-count").textContent =
+    `Seleccionados: 0 / ${gameState.playersCount}`;
+}
+
+function confirmCharacters() {
+  autoSave();
+  buildNameInputs();
+  showScreen("screen-names");
 }
 
 function goBackToCharacters() {
   showScreen("screen-characters");
 }
 
-function goToDifficulty() {
-  showScreen("screen-difficulty");
+/*************************************************
+ * NOMBRES
+ *************************************************/
+function buildNameInputs() {
+  const container = qs("names-container");
+  container.innerHTML = "";
+
+  gameState.selectedCharacters.forEach((char, i) => {
+    const input = document.createElement("input");
+    input.placeholder = `Jugador ${i + 1} (${char})`;
+    input.value = gameState.playerNames[i] || "";
+    input.oninput = () => {
+      gameState.playerNames[i] = input.value;
+      checkNames();
+      autoSave();
+    };
+    container.appendChild(input);
+  });
+
+  checkNames();
+}
+
+function checkNames() {
+  const btn = qs("btn-start-campaign");
+  const ok = gameState.playerNames.length === gameState.playersCount &&
+             gameState.playerNames.every(n => n.trim() !== "");
+
+  btn.disabled = !ok;
+  btn.classList.toggle("disabled", !ok);
 }
 
 function goBackToNames() {
   showScreen("screen-names");
 }
 
-/* =======================
-   DIFICULTAD
-======================= */
-function selectDifficulty(diff) {
-  difficulty = diff;
-  goToPrologue();
-}
-
-/* =======================
-   PRÓLOGO
-======================= */
-function goToPrologue() {
-  $("intro-music")?.pause();
-  $("btn-save-exit").classList.remove("hidden");
-  showScreen("screen-prologue");
-}
-
-/* =======================
-   GUARDADO
-======================= */
-function getAllSaves() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-}
-
-function saveAllSaves(saves) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
-}
-
-function autoSave() {
-  if (!currentSaveId) return;
-
-  const saves = getAllSaves();
-
-  saves[currentSaveId] = normalizeSave({
-    id: currentSaveId,
-    state: {
-      campaignType,
-      playersCount,
-      selectedCharacters,
-      playerNames,
-      difficulty,
-      currentScreen
-    }
-  });
-
-  saveAllSaves(saves);
-}
-
-function saveAndExit() {
+/*************************************************
+ * DIFICULTAD
+ *************************************************/
+function goToDifficulty() {
   autoSave();
-  location.reload();
+  showScreen("screen-difficulty");
 }
 
-/* =======================
-   NORMALIZAR PARTIDAS ANTIGUAS
-======================= */
-function normalizeSave(save) {
-  return {
-    id: save.id || crypto.randomUUID(),
-    name: save.name || "Partida sin nombre",
-    state: {
-      campaignType: save.state?.campaignType || "normal",
-      playersCount: save.state?.playersCount || 1,
-      selectedCharacters: save.state?.selectedCharacters || [],
-      playerNames: save.state?.playerNames || {},
-      difficulty: save.state?.difficulty || "normal",
-      currentScreen: save.state?.currentScreen || "screen-prologue"
-    }
-  };
-}
-
-/* =======================
-   CARGAR PARTIDA
-======================= */
-function loadGame(id) {
-  const saves = getAllSaves();
-  const save = normalizeSave(saves[id]);
-  if (!save) return;
-
-  currentSaveId = id;
-
-  ({
-    campaignType,
-    playersCount,
-    selectedCharacters,
-    playerNames,
-    difficulty,
-    currentScreen
-  } = save.state);
-
-  $("intro-music")?.pause();
-  $("btn-save-exit").classList.remove("hidden");
+function selectDifficulty(diff) {
+  gameState.difficulty = diff;
+  autoSave();
   showScreen("screen-prologue");
-}
-
-/* =======================
-   EXPORT / IMPORT
-======================= */
-function exportJSON() {
-  const data = JSON.stringify(getAllSaves(), null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "primal_saves.json";
-  a.click();
-}
-
-function importJSON(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    const imported = JSON.parse(e.target.result);
-    const current = getAllSaves();
-    saveAllSaves({ ...current, ...imported });
-    location.reload();
-  };
-  reader.readAsText(file);
 }
