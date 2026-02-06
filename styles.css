@@ -1,147 +1,269 @@
-body {
+/* =========================================
+   RESET BÁSICO
+========================================= */
+* {
   margin: 0;
-  font-family: serif;
-  background: white;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================
+   BODY GENERAL
+========================================= */
+body {
+  background-color: #111;
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* =========================================
+   CONTENEDOR GENERAL
+========================================= */
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =========================================
+   PANTALLAS
+========================================= */
+.screen {
+  display: none;
+  margin-top: 30px;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* =========================================
+   TÍTULOS
+========================================= */
+h1, h2, h3 {
+  margin-bottom: 15px;
   text-align: center;
 }
 
-.hidden { display: none !important; }
-
-.screen {
-  display: none;
-  padding: 30px 20px;
-  min-height: 100vh;
-  animation: fade 0.4s ease;
+p {
+  margin-bottom: 10px;
+  line-height: 1.4;
 }
 
-.screen.active { display: block; }
-
-@keyframes fade {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.logo {
-  width: 60%;
-  max-width: 500px;
-  margin: 40px auto;
-}
-
+/* =========================================
+   BOTONES GENERALES
+========================================= */
 .btn {
-  background: black;
-  color: white;
-  border-radius: 12px;
+  display: inline-block;
   padding: 10px 18px;
   margin: 6px;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  background-color: #b30000;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
-.btn.red { background: darkred; }
+.btn:hover {
+  background-color: #e60000;
+}
 
-.btn.disabled {
-  opacity: 0.4;
+.btn.selected {
+  background-color: #000;
+}
+
+.btn.disabled,
+.btn:disabled {
+  background-color: #444;
   cursor: not-allowed;
 }
 
-.player-grid {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 16px;
+/* =========================================
+   MENÚ PRINCIPAL
+========================================= */
+#main-menu {
+  text-align: center;
+  margin-top: 40px;
+}
+
+#main-menu button {
+  width: 220px;
+}
+
+/* =========================================
+   LISTA DE PARTIDAS
+========================================= */
+#save-list-container {
+  text-align: center;
+}
+
+#save-list {
   margin-top: 20px;
 }
 
-.player-card {
-  width: 140px;
-  height: 70px;
-  border: 2px solid black;
-  border-radius: 12px;
+/* =========================================
+   CAMPAÑA
+========================================= */
+.campaign-options {
   display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background: white;
+  flex-wrap: wrap;
 }
 
-.disabled-mode {
-  opacity: 0.4;
-  cursor: not-allowed;
+/* =========================================
+   JUGADORES
+========================================= */
+.players-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.character-grid {
+/* =========================================
+   PERSONAJES
+========================================= */
+.characters-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .character-btn {
-  height: 80px;
-  border: 2px solid black;
-  border-radius: 12px;
-  background: white;
+  padding: 14px;
+  background-color: #b30000;
+  border: none;
+  color: #fff;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .character-btn.selected {
-  background: black;
-  color: white;
+  background-color: #000;
 }
 
-.nav-buttons {
-  margin-top: 30px;
+.character-btn:disabled {
+  background-color: #444;
+  cursor: not-allowed;
 }
 
-.name-row {
-  margin: 12px auto;
+/* =========================================
+   CONTADOR SELECCIÓN
+========================================= */
+#selected-count {
+  margin-top: 15px;
+  text-align: center;
 }
 
-.name-input {
+/* =========================================
+   NOMBRES DE JUGADORES
+========================================= */
+#names-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#names-container input {
   padding: 8px;
-  border-radius: 8px;
-  width: 200px;
+  font-size: 15px;
 }
 
-.btn-mute,
-.btn-save-exit {
+/* =========================================
+   DIFICULTAD
+========================================= */
+.difficulty-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* =========================================
+   PRÓLOGO
+========================================= */
+#screen-prologue {
+  text-align: center;
+}
+
+#screen-prologue p {
+  margin-top: 20px;
+}
+
+/* =========================================
+   BOTÓN GUARDAR / SALIR
+========================================= */
+#btn-save-exit {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #b30000;
+}
+
+/* =========================================
+   EXPORT / IMPORT (SUPERIOR IZQUIERDA)
+========================================= */
+#data-controls {
   position: fixed;
   top: 15px;
-  z-index: 1000;
-}
-
-.btn-mute { left: 15px; }
-
-.btn-save-exit { right: 15px; }
-
-@media (max-width: 768px) {
-  .character-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ==================================================
-   NUEVO – SELECCIONES VISIBLES (CAMPAÑA / JUGADORES / DIFICULTAD)
-   ================================================== */
-
-.player-card.selected {
-  background: black;
-  color: white;
-}
-
-/* ==================================================
-   NUEVO – EXPORT / IMPORT JSON
-   ================================================== */
-
-#json-controls {
-  position: fixed;
-  top: 70px;
   left: 15px;
   display: flex;
   flex-direction: column;
-  z-index: 1000;
+  gap: 6px;
 }
 
-#json-controls .btn {
-  margin-bottom: 6px;
+#data-controls button {
+  background-color: #b30000;
+}
+
+/* =========================================
+   BOTÓN MUTE
+========================================= */
+#btn-mute {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background-color: #000;
+  font-size: 18px;
+}
+
+/* =========================================
+   BOTONES VOLVER
+========================================= */
+.btn-back {
+  margin-top: 20px;
+  background-color: #333;
+}
+
+.btn-back:hover {
+  background-color: #555;
+}
+
+/* =========================================
+   OCULTOS
+========================================= */
+.hidden {
+  display: none;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 600px) {
+  .characters-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  #btn-save-exit {
+    bottom: 10px;
+    right: 10px;
+  }
 }
