@@ -1,77 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Primal – The Awakening Companion</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primal Companion</title>
+
+  <!-- Anti-cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css?v=1.0.0" />
 </head>
 <body>
 
-  <!-- AUDIO -->
-  <audio id="bg-music" src="audio/prologo.mp3" loop></audio>
+  <!-- AUDIO INTRO -->
+  <audio id="intro-music" loop>
+    <source src="assets/audio/intro.mp3" type="audio/mpeg">
+  </audio>
 
-  <!-- EXPORT / IMPORT -->
-  <div id="data-controls">
-    <button id="btn-export" class="btn">Export JSON</button>
-    <button id="btn-import" class="btn">Import JSON</button>
-    <input type="file" id="import-file" accept=".json" hidden>
+  <!-- BOTÓN MUTE -->
+  <button id="btn-mute" class="btn btn-mute" onclick="toggleMusic()">🔊</button>
+
+  <!-- BOTÓN GUARDAR / SALIR -->
+  <button id="btn-save-exit" class="btn btn-save-exit hidden" onclick="saveAndExit()">
+    💾 Guardar / Salir
+  </button>
+
+  <!-- EXPORT / IMPORT JSON -->
+  <div id="json-controls" class="hidden">
+    <button class="btn" onclick="exportJSON()">📤 Exportar</button>
+    <button class="btn" onclick="importJSON()">📥 Importar</button>
   </div>
 
-  <!-- MUTE -->
-  <button id="btn-mute">🔊</button>
+  <!-- ============================= -->
+  <!-- PANTALLA INICIO -->
+  <!-- ============================= -->
+  <div id="screen-start" class="screen active">
 
-  <div id="app">
+    <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
 
-    <!-- LOGO -->
-    <div id="logo-container">
-      <img src="img/logo.png" alt="Primal Logo" id="logo">
-    </div>
-
-    <!-- BOTÓN ENTRAR -->
     <div id="enter-container">
-      <button id="btn-enter" class="btn">ENTRAR</button>
+      <button class="btn btn-start" onclick="showMainMenu()">ENTRAR</button>
     </div>
 
     <!-- MENÚ PRINCIPAL -->
-    <div id="main-menu" class="screen">
-      <button id="btn-new-game" class="btn">Nueva Partida</button>
-      <button id="btn-load-game" class="btn">Cargar Partida</button>
-    </div>
+    <div id="main-menu" class="hidden">
 
-    <!-- NUEVA PARTIDA -->
-    <div id="screen-new-game" class="screen">
-      <h2>Nombre de la partida</h2>
-      <input type="text" id="new-save-name">
-      <button id="btn-create-save" class="btn">💾</button>
-      <button class="btn btn-back" data-back="main-menu">Volver</button>
-    </div>
+      <div class="menu-buttons">
+        <button class="btn menu-btn" onclick="showNewGame()">➕ Nueva Partida</button>
+        <button class="btn menu-btn" onclick="showSavedGames()">💾 Cargar Partida</button>
+      </div>
 
-    <!-- CARGAR PARTIDA -->
-    <div id="screen-load-game" class="screen">
-      <h2>Partidas guardadas</h2>
-      <div id="save-list"></div>
-      <button class="btn btn-back" data-back="main-menu">Volver</button>
-    </div>
+      <!-- NUEVA PARTIDA -->
+      <div id="new-game-container" class="hidden">
+        <h2>Nueva Partida</h2>
 
-    <!-- PRÓLOGO -->
-    <div id="screen-prologue" class="screen">
-      <h2>Prólogo de Campaña</h2>
-      <p id="prologue-text">
-        Las tierras despiertan. El destino ha comenzado a moverse…
-      </p>
-    </div>
+        <input
+          id="new-save-name"
+          class="name-input"
+          placeholder="Nombre de la partida"
+        />
 
+        <div class="nav-buttons">
+          <button class="btn" onclick="confirmNewGame()">💾 Guardar</button>
+          <button class="btn red" onclick="cancelNewGame()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- CARGAR PARTIDA -->
+      <div id="save-list-container" class="hidden">
+        <h2>Partidas Guardadas</h2>
+        <div id="save-list"></div>
+
+        <div class="nav-buttons">
+          <button class="btn red" onclick="goBackToMainMenu()">⬅ Volver</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- GUARDAR / SALIR -->
-  <button id="btn-save-exit" class="btn" disabled>Guardar y Salir</button>
+  <!-- ============================= -->
+  <!-- CAMPAÑA -->
+  <!-- ============================= -->
+  <div id="screen-campaign" class="screen">
+    <h1>¿Qué campaña deseas jugar?</h1>
 
-  <script src="main.js"></script>
-</body>
-</html>
+    <div class="player-grid">
+      <div class="player-card" onclick="selectCampaign('normal')">
+        CAMPAÑA NORMAL
+      </div>
+      <div class="player-card disabled-mode">
+        MOUNT HAVOC<br><small>(Pronto)</small>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn red" onclick="goBackToMainMenu()">⬅ Volver</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- JUGADORES -->
+  <!-- ============================= -->
+  <div id="screen-players" class="screen">
+    <h1>Cantidad de jugadores</h1>
+
+    <div class="player-grid">
+      <div class="player-card" onclick="selectPlayers(1)">SOLO</div>
+      <div class="player-card" onclick="selectPlayers(2)">2</div>
+      <div class="player-card" onclick="selectPlayers(3)">3</div>
+      <div class="player-card" onclick="selectPlayers(4)">4</div>
+      <div class="player-card" onclick="selectPlayers(5)">5</div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn red" onclick="goBackToCampaign()">⬅ Volver</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- PERSONAJES -->
+  <!-- ============================= -->
+  <div id="screen-characters" class="screen">
+    <h1>Selecciona personajes</h1>
+    <p id="selected-count">Seleccionados: 0 / 0</p>
+
+    <div class="character-grid">
+      <button class="character-btn" onclick="toggleCharacter('DAREON')">
+        DAREON<br><small>Espada 2 manos</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('LJONAR')">
+        LJONAR<br><small>Espada y Escudo</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('THOREG')">
+        THOREG<br><small>Martillo</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('MIRAH')">
+        MIRAH<br><small>Arco</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('HELEREN')">
+        HELEREN<br><small>Arco y Revólver</small>
+      </button>
+      <button class="character-btn" onclick="toggleCharacter('KARAH')">
+        KARAH<br><small>Espadas duales</small>
+      </button>
+    </div>
+
+    <div class="nav-buttons">
+      <button id="btn-confirm" class="btn disabled" disabled>
+        Continuar
+      </button>
+      <button class="btn red" onclick="goBackToPlayers()">⬅ Volver</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- NOMBRES -->
+  <!-- ============================= -->
+  <div id="screen-names" class="screen">
+    <h1>Nombres de jugadores</h1>
+    <div id="names-container"></div>
+
+    <div class="nav-buttons">
+      <button id="btn-names-continue" class="btn disabled" disabled>
+        Continuar
+      </button>
+      <button class="btn red" onclick="goBackToCharacters()">⬅ Volver</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- DIFICULTAD -->
+  <!-- ============================= -->
+  <div id="screen-difficulty" class="screen">
+    <h1>Dificultad</h1>
+
+    <div class="player-grid">
+      <div class="player-card" onclick="selectDifficulty('normal')">
+        NORMAL
+      </div>
+      <div class="player-card" onclick="selectDifficulty('pesadilla')">
+        PESADILLA
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button id="btn-difficulty-continue" class="btn disabled" disabled>
+        Continuar
+      </button>
+      <button class="btn red" onclick="goBackToNames()">⬅ Volver</button>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- PRÓLOGO -->
+  <!-- ============================= -->
+  <div id="screen-prologue" class="screen">
+    <h1>Prólogo de campaña</h1>
+    <p id="prologue-text">(Texto del prólogo irá aquí)</p>
+  </div>
 
   <!-- JS -->
   <script src="main.js?v=1.0.0"></script>
-
 </body>
 </html>
