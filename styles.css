@@ -1,36 +1,26 @@
-/* =========================================
-   RESET BÁSICO
-========================================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* =========================================
-   BODY GENERAL
-========================================= */
 body {
-  background-color: #111;
+  background: #111;
   color: #fff;
-  min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-/* =========================================
-   CONTENEDOR GENERAL
-========================================= */
-#app {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+#logo-container {
+  text-align: center;
+  margin-top: 30px;
 }
 
-/* =========================================
-   PANTALLAS
-========================================= */
+#logo {
+  max-width: 300px;
+}
+
+#enter-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
 .screen {
   display: none;
+  text-align: center;
   margin-top: 30px;
 }
 
@@ -38,229 +28,42 @@ body {
   display: block;
 }
 
-/* =========================================
-   TÍTULOS
-========================================= */
-h1, h2, h3 {
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-p {
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-/* =========================================
-   BOTONES GENERALES
-========================================= */
 .btn {
-  display: inline-block;
-  padding: 10px 18px;
-  margin: 6px;
+  padding: 10px 16px;
+  background: #b30000;
+  color: white;
   border: none;
+  margin: 6px;
   cursor: pointer;
-  background-color: #b30000;
-  color: #fff;
-  font-size: 15px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
 }
 
 .btn:hover {
-  background-color: #e60000;
+  background: #e60000;
 }
 
-.btn.selected {
-  background-color: #000;
+.btn-back {
+  background: #444;
 }
 
-.btn.disabled,
-.btn:disabled {
-  background-color: #444;
-  cursor: not-allowed;
-}
-
-/* =========================================
-   MENÚ PRINCIPAL
-========================================= */
-#main-menu {
-  text-align: center;
-  margin-top: 40px;
-}
-
-#main-menu button {
-  width: 220px;
-}
-
-/* =========================================
-   LISTA DE PARTIDAS
-========================================= */
-#save-list-container {
-  text-align: center;
-}
-
-#save-list {
-  margin-top: 20px;
-}
-
-/* =========================================
-   CAMPAÑA
-========================================= */
-.campaign-options {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* =========================================
-   JUGADORES
-========================================= */
-.players-options {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* =========================================
-   PERSONAJES
-========================================= */
-.characters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.character-btn {
-  padding: 14px;
-  background-color: #b30000;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.character-btn.selected {
-  background-color: #000;
-}
-
-.character-btn:disabled {
-  background-color: #444;
-  cursor: not-allowed;
-}
-
-/* =========================================
-   CONTADOR SELECCIÓN
-========================================= */
-#selected-count {
-  margin-top: 15px;
-  text-align: center;
-}
-
-/* =========================================
-   NOMBRES DE JUGADORES
-========================================= */
-#names-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-#names-container input {
-  padding: 8px;
-  font-size: 15px;
-}
-
-/* =========================================
-   DIFICULTAD
-========================================= */
-.difficulty-options {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* =========================================
-   PRÓLOGO
-========================================= */
-#screen-prologue {
-  text-align: center;
-}
-
-#screen-prologue p {
-  margin-top: 20px;
-}
-
-/* =========================================
-   BOTÓN GUARDAR / SALIR
-========================================= */
-#btn-save-exit {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #b30000;
-}
-
-/* =========================================
-   EXPORT / IMPORT (SUPERIOR IZQUIERDA)
-========================================= */
 #data-controls {
   position: fixed;
-  top: 15px;
-  left: 15px;
+  top: 10px;
+  left: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-#data-controls button {
-  background-color: #b30000;
+#btn-save-exit {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
 }
 
-/* =========================================
-   BOTÓN MUTE
-========================================= */
 #btn-mute {
   position: fixed;
-  top: 15px;
-  right: 15px;
-  background-color: #000;
-  font-size: 18px;
+  top: 10px;
+  right: 10px;
 }
-
-/* =========================================
-   BOTONES VOLVER
-========================================= */
-.btn-back {
-  margin-top: 20px;
-  background-color: #333;
-}
-
-.btn-back:hover {
-  background-color: #555;
-}
-
-/* =========================================
-   OCULTOS
-========================================= */
-.hidden {
-  display: none;
-}
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-@media (max-width: 600px) {
-  .characters-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  .btn {
-    width: 100%;
-    margin: 5px 0;
-  }
 
   #btn-save-exit {
     bottom: 10px;
