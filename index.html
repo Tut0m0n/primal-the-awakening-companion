@@ -24,17 +24,26 @@
   <!-- BOTÓN MUTE -->
   <button id="btn-mute" class="btn btn-mute" onclick="toggleMusic()">🔊</button>
 
-  <!-- BOTÓN GUARDAR / SALIR -->
-  <button id="btn-save-exit" class="btn btn-save-exit hidden" onclick="saveAndExit()">
+  <!-- BOTÓN GUARDAR / SALIR (NO SE TOCA) -->
+  <button
+    id="btn-save-exit"
+    class="btn btn-save-exit hidden"
+    onclick="saveAndExit()"
+  >
     💾 Guardar / Salir
   </button>
 
-  <!-- EXPORT / IMPORT -->
+  <!-- EXPORT / IMPORT (SOLO EXISTE, POSICIÓN ES CSS) -->
   <div id="json-controls">
     <button class="btn red" onclick="exportJSON()">⬇ Export</button>
     <label class="btn red">
       ⬆ Import
-      <input type="file" hidden accept=".json" onchange="importJSON(this.files[0])">
+      <input
+        type="file"
+        hidden
+        accept=".json"
+        onchange="importJSON(this.files[0])"
+      >
     </label>
   </div>
 
@@ -43,18 +52,29 @@
   <!-- ================================================= -->
   <div id="screen-start" class="screen active">
 
-    <img src="assets/images/LOGO.png" class="logo" alt="Primal The Awakening">
+    <img
+      src="assets/images/LOGO.png"
+      class="logo"
+      alt="Primal The Awakening"
+    >
 
     <div id="enter-container">
       <button class="btn btn-start" onclick="showMainMenu()">ENTRAR</button>
     </div>
 
     <div id="main-menu" class="hidden">
+
       <div class="menu-buttons">
-        <button class="btn menu-btn" onclick="newGame()">➕ Nueva Partida</button>
-        <button class="btn menu-btn" onclick="showSavedGames()">💾 Cargar Partida</button>
+        <button class="btn menu-btn" onclick="newGame()">
+          ➕ Nueva Partida
+        </button>
+
+        <button class="btn menu-btn" onclick="showSavedGames()">
+          💾 Cargar Partida
+        </button>
       </div>
 
+      <!-- LISTA DE PARTIDAS (NO SE TOCA) -->
       <div id="save-list-container" class="hidden">
         <h2>Partidas Guardadas</h2>
         <div id="save-list"></div>
@@ -63,6 +83,7 @@
           <button class="btn red" onclick="goBackToStart()">⬅ Volver</button>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -73,9 +94,13 @@
     <h1>¿Qué campaña deseas jugar?</h1>
 
     <div class="player-grid">
-      <div class="player-card" onclick="selectCampaign('normal')">NORMAL</div>
+      <div class="player-card" onclick="selectCampaign('normal')">
+        NORMAL
+      </div>
+
       <div class="player-card disabled-mode">
-        MOUNT HAVOC<br><small>(Pronto)</small>
+        MOUNT HAVOC<br>
+        <small>(Pronto)</small>
       </div>
     </div>
 
@@ -137,9 +162,15 @@
     </div>
 
     <div class="nav-buttons">
-      <button id="btn-confirm" class="btn disabled" disabled onclick="confirmCharacters()">
+      <button
+        id="btn-confirm"
+        class="btn disabled"
+        disabled
+        onclick="confirmCharacters()"
+      >
         Continuar
       </button>
+
       <button class="btn red" onclick="goBackToPlayers()">⬅ Volver</button>
     </div>
   </div>
@@ -152,9 +183,15 @@
     <div id="names-container"></div>
 
     <div class="nav-buttons">
-      <button id="btn-start-campaign" class="btn disabled" disabled onclick="goToDifficulty()">
+      <button
+        id="btn-start-campaign"
+        class="btn disabled"
+        disabled
+        onclick="goToDifficulty()"
+      >
         Continuar
       </button>
+
       <button class="btn red" onclick="goBackToCharacters()">⬅ Volver</button>
     </div>
   </div>
@@ -182,7 +219,7 @@
     <h1>Prólogo de Campaña</h1>
     <p>
       El viento sopla entre las ruinas mientras los héroes se preparan
-      para lo que está por venir...
+      para lo que está por venir…
     </p>
   </div>
 
